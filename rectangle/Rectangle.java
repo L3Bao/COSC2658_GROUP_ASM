@@ -94,4 +94,36 @@ public class Rectangle {
     public double distanceFrom(Point point) {
         return Math.sqrt(this.sqDistanceFrom(point));
     }
+
+    public static void main(String[] args) {
+        // Create a rectangle at center (10, 10) with width 20 and height 20
+        Rectangle rect = new Rectangle(10, 10, 20, 20);
+
+        // Create points to test containment
+        Point insidePoint = new Point(15, 15, null);  // Inside the rectangle
+        Point outsidePoint = new Point(35, 25, null); // Outside the rectangle
+        Point boundaryPoint = new Point(10, 10, null); // On the boundary
+
+        System.out.println("Does the rectangle contain insidePoint? " + rect.contains(insidePoint));
+        System.out.println("Does the rectangle contain outsidePoint? " + rect.contains(outsidePoint));
+        System.out.println("Does the rectangle contain boundaryPoint? " + rect.contains(boundaryPoint));
+
+        // Create another rectangle to test intersection
+        Rectangle intersectingRect = new Rectangle(15, 15, 10, 10); // Intersects with rect
+        Rectangle nonIntersectingRect = new Rectangle(50, 50, 5, 5); // Does not intersect
+
+        System.out.println("Does rect intersect with intersectingRect? " + rect.intersects(intersectingRect));
+        System.out.println("Does rect intersect with nonIntersectingRect? " + rect.intersects(nonIntersectingRect));
+
+        // Subdividing rectangle
+        Rectangle neSubRect = rect.subdivide("ne");
+        Rectangle nwSubRect = rect.subdivide("nw");
+        Rectangle seSubRect = rect.subdivide("se");
+        Rectangle swSubRect = rect.subdivide("sw");
+
+        System.out.println("Northeast Subdivision: (" + neSubRect.x + ", " + neSubRect.y + ")");
+        System.out.println("Northwest Subdivision: (" + nwSubRect.x + ", " + nwSubRect.y + ")");
+        System.out.println("Southeast Subdivision: (" + seSubRect.x + ", " + seSubRect.y + ")");
+        System.out.println("Southwest Subdivision: (" + swSubRect.x + ", " + swSubRect.y + ")");
+    }
 }
