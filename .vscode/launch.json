@@ -6,6 +6,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "QuadTree",
+            "request": "launch",
+            "mainClass": "quadTree.QuadTree",
+            "projectName": "COSC2658_GROUP_ASM_98a9fdec"
+        },
+        {
+            "type": "java",
+            "name": "Rectangle",
+            "request": "launch",
+            "mainClass": "rectangle.Rectangle",
+            "projectName": "COSC2658_GROUP_ASM_98a9fdec"
+        },
+        {
+            "type": "java",
             "name": "Place",
             "request": "launch",
             "mainClass": "place.Place",
