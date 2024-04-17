@@ -11,6 +11,16 @@ class Point {
         this.userData = data;
     }
 
+    public double sqDistanceFrom(Point other) {
+        double dx = other.x - this.x;
+        double dy = other.y - this.y;
+        return dx * dx + dy * dy;
+    }
+
+    public double distanceFrom(Point other) {
+        return Math.sqrt(this.sqDistanceFrom(other));
+    }
+
     // Getters for the properties
     public double getX() {
         return x;
@@ -22,6 +32,18 @@ class Point {
 
     public Object getUserData() {
         return userData;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setUserData(Object userData) {
+        this.userData = userData;
     }
 }
 
