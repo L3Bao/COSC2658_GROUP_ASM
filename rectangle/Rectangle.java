@@ -1,52 +1,5 @@
 package rectangle;
-
-class Point {
-    private double x;
-    private double y;
-    private Object userData;
-
-    public Point(double x, double y, Object data) {
-        this.x = x;
-        this.y = y;
-        this.userData = data;
-    }
-
-    public double sqDistanceFrom(Point other) {
-        double dx = other.x - this.x;
-        double dy = other.y - this.y;
-        return dx * dx + dy * dy;
-    }
-
-    public double distanceFrom(Point other) {
-        return Math.sqrt(this.sqDistanceFrom(other));
-    }
-
-    // Getters for the properties
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public Object getUserData() {
-        return userData;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public void setUserData(Object userData) {
-        this.userData = userData;
-    }
-}
-
+import place.Place;
 
 public class Rectangle {
     private double x, y; // Center of the rectangle
@@ -65,7 +18,7 @@ public class Rectangle {
         this.bottom = y + h / 2;
     }
 
-    public boolean contains(Point point) {
+    public boolean contains(Place point) {
         return this.left <= point.getX() && point.getX() <= this.right &&
                 this.top <= point.getY() && point.getY() <= this.bottom;
     }
@@ -85,7 +38,7 @@ public class Rectangle {
         };
     }
 
-    public double xDistanceFrom(Point point) {
+    public double xDistanceFrom(Place point) {
         if (this.left <= point.getX() && point.getX() <= this.right) {
             return 0;
         }
@@ -96,7 +49,7 @@ public class Rectangle {
         );
     }
 
-    public double yDistanceFrom(Point point) {
+    public double yDistanceFrom(Place point) {
         if (this.top <= point.getY() && point.getY() <= this.bottom) {
             return 0;
         }
@@ -107,13 +60,13 @@ public class Rectangle {
         );
     }
 
-    public double sqDistanceFrom(Point point) {
+    public double sqDistanceFrom(Place point) {
         double dx = this.xDistanceFrom(point);
         double dy = this.yDistanceFrom(point);
         return dx * dx + dy * dy;
     }
 
-    public double distanceFrom(Point point) {
+    public double distanceFrom(Place point) {
         return Math.sqrt(this.sqDistanceFrom(point));
     }
 
@@ -122,9 +75,9 @@ public class Rectangle {
         Rectangle rect = new Rectangle(10, 10, 20, 20);
 
         // Create points to test containment
-        Point insidePoint = new Point(15, 15, null);  // Inside the rectangle
-        Point outsidePoint = new Point(35, 25, null); // Outside the rectangle
-        Point boundaryPoint = new Point(10, 10, null); // On the boundary
+        Place insidePoint = new Place(15, 15, null);  // Inside the rectangle
+        Place outsidePoint = new Place(35, 25, null); // Outside the rectangle
+        Place boundaryPoint = new Place(10, 10, null); // On the boundary
 
         System.out.println("Does the rectangle contain insidePoint? " + rect.contains(insidePoint));
         System.out.println("Does the rectangle contain outsidePoint? " + rect.contains(outsidePoint));
