@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Place",
+            "request": "launch",
+            "mainClass": "place.Place",
+            "projectName": "COSC2658_GROUP_ASM_98a9fdec"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}"
