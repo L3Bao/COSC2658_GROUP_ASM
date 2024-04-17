@@ -52,6 +52,14 @@ public class Place {
         }
     }
 
+    public void removeAt(int index) {
+        serviceTypes.removeAt(index);
+    }
+
+    public void remove(String serviceType) {
+        serviceTypes.remove(serviceType);
+    }
+
     public String toString() {
         StringBuilder result = new StringBuilder("Place{x=" + this.x + ", y=" + this.y + ", serviceTypes=[");
         for (int i = 0; i < serviceTypes.size(); i++) {
@@ -68,6 +76,8 @@ public class Place {
         place1.addServiceType("Coffee shop");
         System.out.println(place1);
         place1.updateServiceType(1, "Bakery");
+        System.out.println(place1);
+        place1.remove("Bakery");
         System.out.println(place1);
     }
 }
