@@ -83,9 +83,9 @@ public class QuadTree {
         QuadTree tree = new QuadTree(boundary);
     
         // Add some places to the quadtree
-        tree.insert(new Place(10, 20, "Cafe"));
-        tree.insert(new Place(30, 40, "Library"));
-        tree.insert(new Place(70, 80, "Restaurant"));
+        tree.insert(new Place(10, 20, "Cafe,Restaurant, Gas"));
+        tree.insert(new Place(30, 40, "Library, Cafe"));
+        tree.insert(new Place(70, 80, "Restaurant,Library, Cafe"));
     
         // Define a query range and find POIs within that range
         Rectangle searchArea = new Rectangle(25, 25, 50, 50);
