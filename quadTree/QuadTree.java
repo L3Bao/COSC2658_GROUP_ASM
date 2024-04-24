@@ -95,8 +95,21 @@ public class QuadTree {
         for (int i = 0; i < 100000000; i++) {  // Reduced number for practical testing
             double x = random.nextDouble() * 10000000;
             double y = random.nextDouble() * 10000000;
-            String serviceType = serviceTypes[random.nextInt(serviceTypes.length)];
-            tree.insert(new Place(x, y, serviceType));
+            //Randomize the number of services
+            String allServiceTypes = "";
+            int numberOfServices = random.nextInt(3)+1;
+            for (int n = 0; n < numberOfServices; n++) {
+                String serviceType = serviceTypes[random.nextInt(serviceTypes.length)];
+                if (allServiceTypes.contains(serviceType)){
+                    serviceType = serviceTypes[random.nextInt(serviceTypes.length)];
+                }
+                if (n == numberOfServices - 1) {
+                    allServiceTypes += serviceType;
+                } else {
+                    allServiceTypes += serviceType + ",";
+                }
+            }
+            tree.insert(new Place(x, y, allServiceTypes));
         }
 
         // Query places
