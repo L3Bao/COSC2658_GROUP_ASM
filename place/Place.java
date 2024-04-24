@@ -16,7 +16,11 @@ public class Place {
         this.x = x;
         this.y = y;
         this.serviceTypes = new ArrayList<String>();
-        this.serviceTypes.insertAt(0, serviceType); // Correct use of insertAt
+        String[] tempServiceTypes = serviceType.split(",");
+        for (int i = 0; i < tempServiceTypes.length; i++){
+            this.serviceTypes.insertAt(i, tempServiceTypes[i].trim()); // Correct use of insertAt
+        }
+
     }
 
     public double getX() {
