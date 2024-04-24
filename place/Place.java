@@ -1,87 +1,116 @@
 package place;
-import arrayList.ArrayList; // Correct import of your custom ArrayList class
+import arrayList.ArrayList; // Assuming this is correctly importing your custom ArrayList
 
 public class Place {
     double x;
     double y;
-    ArrayList<String> serviceTypes;
+    ArrayList<Integer> serviceTypeIndexes; // Store indexes of the service types
 
-    public Place() {
-        this.x = 0.0;
-        this.y = 0.0;
-        // this.serviceTypes = new ArrayList<String>();
-    }
+    // Static list to hold all possible service types
+    static ArrayList<String> allServiceTypes = new ArrayList<>();
 
-    public Place(double x, double y, String serviceType) {
+    public Place(double x, double y, String serviceTypes) {
         this.x = x;
         this.y = y;
-        this.serviceTypes = new ArrayList<String>();
-        String[] tempServiceTypes = serviceType.split(",");
-        for (int i = 0; i < tempServiceTypes.length; i++){
-            this.serviceTypes.insertAt(i, tempServiceTypes[i].trim()); // Correct use of insertAt
+        this.serviceTypeIndexes = new ArrayList<Integer>();
+        
+        // Split and process multiple service types separated by commas
+        for (String serviceType : serviceTypes.split(",")) {
+            addServiceType(serviceType.trim());
         }
-
     }
+
+    
+
+    public static int getServiceTypeIndex(String serviceType) {
+        // Check if the service type already exists in the list
+        for (int i = 0; i < allServiceTypes.size(); i++) {
+            if (allServiceTypes.get(i).equals(serviceType)) {
+                return i; // Return existing index
+            }
+        }
+        // If not found, add it to the list
+        allServiceTypes.insertAt(allServiceTypes.size(), serviceType);
+        return allServiceTypes.size() - 1; // Return new index
+    }
+
+    public void addServiceType(String serviceType) {
+        int index = getServiceTypeIndex(serviceType);
+        serviceTypeIndexes.insertAt(serviceTypeIndexes.size(), index);
+    }
+
+    public String getServiceTypeNames() {
+        StringBuilder result = new StringBuilder();
+        // Use traditional for loop for compatibility with custom ArrayList
+        for (int i = 0; i < serviceTypeIndexes.size(); i++) {
+            int index = serviceTypeIndexes.get(i); // Access by index
+            result.append(allServiceTypes.get(index)); // Get the actual service type name using the index
+            if (i < serviceTypeIndexes.size() - 1) {
+                result.append(", ");
+            }
+        }
+        return result.toString();
+    }    
+
+    @Override
+    public String toString() {
+        return "Place{x=" + x + ", y=" + y + ", serviceTypes=[" + getServiceTypeNames() + "]}";
+    }
+
+    public static void main(String[] args) {
+        Place place1 = new Place(1.0, 1.0, "Donut shop, Coffee shop");
+        System.out.println(place1);
+        place1.addServiceType("Bakery");
+        System.out.println(place1);
+        place1.addServiceType("Coffee shop"); // Test adding an existing service type
+        System.out.println(place1);
+    }
+
+
 
     public double getX() {
-        return this.x;
+        return x;
     }
+
+
 
     public void setX(double x) {
         this.x = x;
     }
 
+
+
     public double getY() {
-        return this.y;
+        return y;
     }
+
+
 
     public void setY(double y) {
         this.y = y;
     }
 
-    public ArrayList<String> getServiceTypes() {
-        return this.serviceTypes;
+
+
+    public ArrayList<Integer> getServiceTypeIndexes() {
+        return serviceTypeIndexes;
     }
 
-    public void addServiceType(String serviceType) {
-        this.serviceTypes.insertAt(this.serviceTypes.size(), serviceType); // Insert at the end
+
+
+    public void setServiceTypeIndexes(ArrayList<Integer> serviceTypeIndexes) {
+        this.serviceTypeIndexes = serviceTypeIndexes;
     }
 
-    public void updateServiceType(int index, String serviceType) {
-        if (index >= 0 && index < this.serviceTypes.size()) {
-            this.serviceTypes.replaceAt(index, serviceType); // Use replaceAt
-            System.out.println("Service Type Updated: " + serviceType);
-        } else {
-            System.out.println("Invalid index for service types.");
-        }
+
+
+    public static ArrayList<String> getAllServiceTypes() {
+        return allServiceTypes;
     }
 
-    public void removeAt(int index) {
-        serviceTypes.removeAt(index);
-    }
 
-    public void remove(String serviceType) {
-        serviceTypes.remove(serviceType);
-    }
 
-    public String toString() {
-        StringBuilder result = new StringBuilder("Place{x=" + this.x + ", y=" + this.y + ", serviceTypes=[");
-        for (int i = 0; i < serviceTypes.size(); i++) {
-            result.append(serviceTypes.get(i));
-            if (i < serviceTypes.size() - 1) result.append(", ");
-        }
-        result.append("]}");
-        return result.toString();
-    }
-
-    public static void main(String[] args) {
-        Place place1 = new Place(1.0, 1.0, "Donut shop");
-        System.out.println(place1);
-        place1.addServiceType("Coffee shop");
-        System.out.println(place1);
-        place1.updateServiceType(1, "Bakery");
-        System.out.println(place1);
-        place1.remove("Bakery");
-        System.out.println(place1);
+    public static void setAllServiceTypes(ArrayList<String> allServiceTypes) {
+        Place.allServiceTypes = allServiceTypes;
     }
 }

@@ -101,4 +101,68 @@ public class Rectangle {
         System.out.println("Southeast Subdivision: (" + seSubRect.x + ", " + seSubRect.y + ")");
         System.out.println("Southwest Subdivision: (" + swSubRect.x + ", " + swSubRect.y + ")");
     }
+
+    public double getX() {
+        return x;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public double getW() {
+        return w;
+    }
+
+    public void setW(double w) {
+        this.w = w;
+    }
+
+    public double getH() {
+        return h;
+    }
+
+    public void setH(double h) {
+        this.h = h;
+    }
+
+    public double getLeft() {
+        return left;
+    }
+
+    public void setLeft(double left) {
+        this.left = left;
+    }
+
+    public double getRight() {
+        return right;
+    }
+
+    public void setRight(double right) {
+        this.right = right;
+    }
+
+    public double getTop() {
+        return top;
+    }
+
+    public void setTop(double top) {
+        this.top = top;
+    }
+
+    public double getBottom() {
+        return bottom;
+    }
+
+    public void setBottom(double bottom) {
+        this.bottom = bottom;
+    }
 }
