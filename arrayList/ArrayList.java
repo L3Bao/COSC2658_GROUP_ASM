@@ -21,12 +21,18 @@ public class ArrayList<T> implements List<T> {
     }
 }
 
+  public boolean add(T value) {
+    ensureCapacity();  // Ensure there is enough room for a new element
+    return insertAt(size, value);  // Utilize insertAt to place the new element at the end of the list
+  }
+
   // Big-O time complexity of insertAt: O(n)
   @Override
   public boolean insertAt(int index, T value) {
     if (index > size) {
       return false;
     }
+    ensureCapacity();  // Ensure capacity before modifying the array
     shiftRight(index);
     items[index] = value;
     size++;
@@ -156,6 +162,7 @@ public class ArrayList<T> implements List<T> {
       items[i - 1] = items[i];
     }
   }
+  
 
   public static void main(String[] args) {
     List<String> names = new ArrayList<>();

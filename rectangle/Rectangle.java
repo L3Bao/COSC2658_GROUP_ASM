@@ -1,4 +1,5 @@
 package rectangle;
+
 import place.Place;
 
 public class Rectangle {
@@ -29,13 +30,31 @@ public class Rectangle {
     }
 
     public Rectangle subdivide(String quadrant) {
-        return switch (quadrant) {
-            case "ne" -> new Rectangle(this.x + this.w / 4, this.y - this.h / 4, this.w / 2, this.h / 2);
-            case "nw" -> new Rectangle(this.x - this.w / 4, this.y - this.h / 4, this.w / 2, this.h / 2);
-            case "se" -> new Rectangle(this.x + this.w / 4, this.y + this.h / 4, this.w / 2, this.h / 2);
-            case "sw" -> new Rectangle(this.x - this.w / 4, this.y + this.h / 4, this.w / 2, this.h / 2);
-            default -> throw new IllegalArgumentException("Invalid quadrant specified");
-        };
+        double halfW = this.w / 2;
+        double halfH = this.h / 2;
+        double newX, newY;
+
+        switch (quadrant) {
+            case "ne":
+                newX = this.x + halfW / 2;
+                newY = this.y - halfH / 2;
+                break;
+            case "nw":
+                newX = this.x - halfW / 2;
+                newY = this.y - halfH / 2;
+                break;
+            case "se":
+                newX = this.x + halfW / 2;
+                newY = this.y + halfH / 2;
+                break;
+            case "sw":
+                newX = this.x - halfW / 2;
+                newY = this.y + halfH / 2;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid quadrant specified");
+        }
+        return new Rectangle(newX, newY, halfW, halfH);
     }
 
     public double xDistanceFrom(Place point) {
@@ -45,8 +64,7 @@ public class Rectangle {
 
         return Math.min(
                 Math.abs(point.getX() - this.left),
-                Math.abs(point.getX() - this.right)
-        );
+                Math.abs(point.getX() - this.right));
     }
 
     public double yDistanceFrom(Place point) {
@@ -56,8 +74,7 @@ public class Rectangle {
 
         return Math.min(
                 Math.abs(point.getY() - this.top),
-                Math.abs(point.getY() - this.bottom)
-        );
+                Math.abs(point.getY() - this.bottom));
     }
 
     public double sqDistanceFrom(Place point) {
@@ -75,7 +92,7 @@ public class Rectangle {
         Rectangle rect = new Rectangle(10, 10, 20, 20);
 
         // Create points to test containment
-        Place insidePoint = new Place(15, 15, null);  // Inside the rectangle
+        Place insidePoint = new Place(15, 15, null); // Inside the rectangle
         Place outsidePoint = new Place(35, 25, null); // Outside the rectangle
         Place boundaryPoint = new Place(10, 10, null); // On the boundary
 
@@ -165,4 +182,11 @@ public class Rectangle {
     public void setBottom(double bottom) {
         this.bottom = bottom;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Rectangle [x=%f, y=%f, width=%f, height=%f, left=%f, right=%f, top=%f, bottom=%f]",
+                this.x, this.y, this.w, this.h, this.left, this.right, this.top, this.bottom);
+    }
+
 }
