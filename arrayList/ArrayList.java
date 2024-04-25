@@ -3,12 +3,13 @@ package arrayList;
 public class ArrayList<T> implements List<T> {
   private int size;
   private int pointer;
-  private static int CAPACITY = 50;
+  private int CAPACITY;
   private T[] items;
 
-  public ArrayList() {
+  public ArrayList(int capacity) {
     size = 0;
     pointer = 0;
+    CAPACITY = capacity;
     items = (T[]) new Object[CAPACITY];
   }
 
@@ -19,10 +20,10 @@ public class ArrayList<T> implements List<T> {
         System.arraycopy(items, 0, newItems, 0, items.length);
         items = newItems;
     }
-}
+  }
 
   public boolean add(T value) {
-    ensureCapacity();  // Ensure there is enough room for a new element
+//    ensureCapacity();  // Ensure there is enough room for a new element
     return insertAt(size, value);  // Utilize insertAt to place the new element at the end of the list
   }
 
@@ -32,7 +33,7 @@ public class ArrayList<T> implements List<T> {
     if (index > size) {
       return false;
     }
-    ensureCapacity();  // Ensure capacity before modifying the array
+//    ensureCapacity();  // Ensure capacity before modifying the array
     shiftRight(index);
     items[index] = value;
     size++;
@@ -165,7 +166,7 @@ public class ArrayList<T> implements List<T> {
   
 
   public static void main(String[] args) {
-    List<String> names = new ArrayList<>();
+    List<String> names = new ArrayList<>(5);
     names.insertAt(0, "World");  // World
     names.insertAt(0, "Hello");  // Hello, World
     names.insertAt(0, "RMIT");  // RMIT, Hello, World

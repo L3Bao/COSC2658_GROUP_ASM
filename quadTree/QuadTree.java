@@ -15,7 +15,7 @@ public class QuadTree {
 
     public QuadTree(Rectangle boundary, String path) {
         this.boundary = boundary;
-        this.points = new ArrayList<>();
+        this.points = new ArrayList<>(MAX_CAPACITY);
         this.divided = false;
         this.path = path;
     }
@@ -31,22 +31,22 @@ public class QuadTree {
         southeast = new QuadTree(new Rectangle(x + halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight), path + " SE");
         southwest = new QuadTree(new Rectangle(x - halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight), path + " SW");
     
-        System.out.println("Subdividing " + path + " into NE, NW, SE, SW quadrants");
+//        System.out.println("Subdividing " + path + " into NE, NW, SE, SW quadrants");
     
         divided = true;
     }
     
     public boolean insert(Place point) {
-        System.out.printf("Debug: Attempting to insert point %s into %s\n", point, path);
+//        System.out.printf("Debug: Attempting to insert point %s into %s\n", point, path);
 
         if (!boundary.contains(point)) {
-            System.out.printf("Debug: Point %s is outside the boundaries of %s\n", point, path);
+//            System.out.printf("Debug: Point %s is outside the boundaries of %s\n", point, path);
             return false;
         }
 
         if (points.size() < MAX_CAPACITY && !divided) {
             points.add(point);
-            System.out.printf("Debug: Point %s added directly to node within %s\n", point, path);
+//            System.out.printf("Debug: Point %s added directly to node within %s\n", point, path);
             return true;
         }
 
@@ -98,7 +98,7 @@ public class QuadTree {
 
     public static void main(String[] args) {
         // Define a smaller boundary for the QuadTree
-        Rectangle boundary = new Rectangle(100, 100, 200, 200);
+        Rectangle boundary = new Rectangle(5000000, 5000000, 10000000, 10000000);
         QuadTree tree = new QuadTree(boundary, "Root"); // Initializing with "Root" as the path for the initial rectangle
     
         Random random = new Random();
@@ -111,7 +111,7 @@ public class QuadTree {
         long startTime = System.nanoTime();
     
         // Insert only 10 places to see how well the subdivision works on a small scale
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 15000000; i++) {
             double x = boundary.getLeft() + random.nextDouble() * boundary.getW(); // Correctly position points within the boundary
             double y = boundary.getTop() + random.nextDouble() * boundary.getH();
             String allServiceTypes = "";
@@ -127,8 +127,8 @@ public class QuadTree {
         }
     
         // Query a small area within the map to demonstrate the targeted retrieval capabilities
-        Rectangle searchArea = new Rectangle(100, 100, 200, 200); // A more focused central area within the map
-        ArrayList<Place> found = new ArrayList<>();
+        Rectangle searchArea = new Rectangle(5000000, 5000000, 5000000, 10000000); // A more focused central area within the map
+        ArrayList<Place> found = new ArrayList<>(100000000);
         tree.query(searchArea, found);
     
         // Performance tracking end
@@ -140,8 +140,8 @@ public class QuadTree {
         double duration = (endTime - startTime) / 1_000_000_000.0;
     
         // Output results
-        System.out.println("Displaying found places:");
-        for (int i = 0; i < found.size(); i++) {
+        System.out.println("Displaying up to 50 found places:");
+        for (int i = 0; i < 50; i++) {
             System.out.println(found.get(i));
         }
     

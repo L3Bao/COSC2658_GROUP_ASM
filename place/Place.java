@@ -7,12 +7,12 @@ public class Place {
     ArrayList<Integer> serviceTypeIndexes; // Store indexes of the service types
 
     // Static list to hold all possible service types
-    static ArrayList<String> allServiceTypes = new ArrayList<>();
+    static ArrayList<String> allServiceTypes = new ArrayList<>(10);
 
     public Place(double x, double y, String serviceTypes) {
         this.x = x;
         this.y = y;
-        this.serviceTypeIndexes = new ArrayList<Integer>();
+        this.serviceTypeIndexes = new ArrayList<Integer>(3);
         
         // Split and process multiple service types separated by commas
         for (String serviceType : serviceTypes.split(",")) {
