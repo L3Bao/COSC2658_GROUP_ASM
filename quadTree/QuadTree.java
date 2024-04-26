@@ -11,13 +11,13 @@ public class QuadTree {
     private ArrayList<Place> points;  // Points contained in this node
     private boolean divided;  // Indicates if this node has been subdivided
     private QuadTree northeast, northwest, southeast, southwest;
-    private String path;  // To track the path of subdivision
+//    private String path;  // To track the path of subdivision
 
-    public QuadTree(Rectangle boundary, String path) {
+    public QuadTree(Rectangle boundary/*, String path*/) {
         this.boundary = boundary;
         this.points = new ArrayList<>(MAX_CAPACITY);
         this.divided = false;
-        this.path = path;
+//        this.path = path;
     }
 
     private void subdivide() {
@@ -26,10 +26,10 @@ public class QuadTree {
         double x = boundary.getX();
         double y = boundary.getY();
     
-        northeast = new QuadTree(new Rectangle(x + halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight), path + " NE");
-        northwest = new QuadTree(new Rectangle(x - halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight), path + " NW");
-        southeast = new QuadTree(new Rectangle(x + halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight), path + " SE");
-        southwest = new QuadTree(new Rectangle(x - halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight), path + " SW");
+        northeast = new QuadTree(new Rectangle(x + halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight)/*, path + " NE"*/);
+        northwest = new QuadTree(new Rectangle(x - halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight)/*, path + " NW"*/);
+        southeast = new QuadTree(new Rectangle(x + halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight)/*, path + " SE"*/);
+        southwest = new QuadTree(new Rectangle(x - halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight)/*, path + " SW"*/);
     
 //        System.out.println("Subdividing " + path + " into NE, NW, SE, SW quadrants");
     
@@ -99,36 +99,30 @@ public class QuadTree {
     public static void main(String[] args) {
         // Define a smaller boundary for the QuadTree
         Rectangle boundary = new Rectangle(5000000, 5000000, 10000000, 10000000);
-        QuadTree tree = new QuadTree(boundary, "Root"); // Initializing with "Root" as the path for the initial rectangle
+        QuadTree tree = new QuadTree(boundary/*, "Root"*/); // Initializing with "Root" as the path for the initial rectangle
     
         Random random = new Random();
         String[] serviceTypes = {"Cafe", "Restaurant", "Gas Station", "Library", "Hospital", "School", "Store", "Park", "Hotel", "Gym"};
     
+        Place.setAllServiceTypes(ArrayList.generateStringArrayPowerSet(serviceTypes));
+
         // Start performance tracking
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
         long startMemory = runtime.totalMemory() - runtime.freeMemory();
         long startTime = System.nanoTime();
-    
+
         // Insert only 10 places to see how well the subdivision works on a small scale
-        for (int i = 0; i < 15000000; i++) {
+        for (int i = 0; i < 29000000; i++) {
             double x = boundary.getLeft() + random.nextDouble() * boundary.getW(); // Correctly position points within the boundary
             double y = boundary.getTop() + random.nextDouble() * boundary.getH();
-            String allServiceTypes = "";
-            int numberOfServices = random.nextInt(3) + 1;
-            for (int n = 0; n < numberOfServices; n++) {
-                int serviceIndex = random.nextInt(serviceTypes.length);
-                String serviceType = serviceTypes[serviceIndex];
-                if (!allServiceTypes.contains(serviceType)) {
-                    allServiceTypes += serviceType + (n < numberOfServices - 1 ? "," : "");
-                }
-            }
-            tree.insert(new Place(x, y, allServiceTypes));
+            int servicesTypeIndex = random.nextInt(1024);
+            tree.insert(new Place(x, y, servicesTypeIndex));
         }
     
         // Query a small area within the map to demonstrate the targeted retrieval capabilities
         Rectangle searchArea = new Rectangle(5000000, 5000000, 5000000, 10000000); // A more focused central area within the map
-        ArrayList<Place> found = new ArrayList<>(100000000);
+        ArrayList<Place> found = new ArrayList<>(20000000);
         tree.query(searchArea, found);
     
         // Performance tracking end

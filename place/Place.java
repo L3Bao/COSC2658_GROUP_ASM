@@ -4,53 +4,53 @@ import arrayList.ArrayList; // Assuming this is correctly importing your custom 
 public class Place {
     double x;
     double y;
-    ArrayList<Integer> serviceTypeIndexes; // Store indexes of the service types
+    int serviceTypeIndexes; // Store indexes of the service types
 
     // Static list to hold all possible service types
-    static ArrayList<String> allServiceTypes = new ArrayList<>(10);
+    static ArrayList<String> allServiceTypes = new ArrayList<>(1024);
 
-    public Place(double x, double y, String serviceTypes) {
+    public Place(double x, double y, int serviceTypeIndexes) {
         this.x = x;
         this.y = y;
-        this.serviceTypeIndexes = new ArrayList<Integer>(3);
-        
-        // Split and process multiple service types separated by commas
-        for (String serviceType : serviceTypes.split(",")) {
-            addServiceType(serviceType.trim());
-        }
+        this.serviceTypeIndexes = serviceTypeIndexes;
     }
 
     
 
-    public static int getServiceTypeIndex(String serviceType) {
+    public static int getServicesTypesIndex(String servicesTypes) {
         // Check if the service type already exists in the list
         for (int i = 0; i < allServiceTypes.size(); i++) {
-            if (allServiceTypes.get(i).equals(serviceType)) {
+            if (allServiceTypes.get(i).equals(servicesTypes)) {
                 return i; // Return existing index
             }
         }
-        // If not found, add it to the list
-        allServiceTypes.insertAt(allServiceTypes.size(), serviceType);
-        return allServiceTypes.size() - 1; // Return new index
+        // If not found, return -1
+        return -1;
     }
 
     public void addServiceType(String serviceType) {
-        int index = getServiceTypeIndex(serviceType);
-        serviceTypeIndexes.insertAt(serviceTypeIndexes.size(), index);
+        String currentServices = allServiceTypes.get(serviceTypeIndexes);
+        System.out.println(currentServices);
+        if (currentServices.contains(serviceType)) {
+            System.out.println("The place already have the inputted service!");
+            return;
+        }else if (currentServices == ""){
+            currentServices += serviceType;
+        } else if (currentServices != ""){
+            currentServices += ", " + serviceType;
+        }
+        System.out.println(currentServices);
+        for (int i = 0; i < allServiceTypes.size(); i++) {
+            //if found the string with the correct services types, change the service type index
+            if (allServiceTypes.get(i).contains(currentServices)) {
+                this.serviceTypeIndexes = i;
+            }
+        }
     }
 
     public String getServiceTypeNames() {
-        StringBuilder result = new StringBuilder();
-        // Use traditional for loop for compatibility with custom ArrayList
-        for (int i = 0; i < serviceTypeIndexes.size(); i++) {
-            int index = serviceTypeIndexes.get(i); // Access by index
-            result.append(allServiceTypes.get(index)); // Get the actual service type name using the index
-            if (i < serviceTypeIndexes.size() - 1) {
-                result.append(", ");
-            }
-        }
-        return result.toString();
-    }    
+        return allServiceTypes.get(serviceTypeIndexes);
+    }
 
     @Override
     public String toString() {
@@ -58,11 +58,15 @@ public class Place {
     }
 
     public static void main(String[] args) {
-        Place place1 = new Place(1.0, 1.0, "Donut shop, Coffee shop");
+        String[] serviceTypes = {"Cafe", "Restaurant", "Gas Station", "Library", "Hospital", "School", "Store", "Park", "Hotel", "Gym"};
+
+        Place.setAllServiceTypes(ArrayList.generateStringArrayPowerSet(serviceTypes));
+
+        Place place1 = new Place(1.0, 1.0, 3);
         System.out.println(place1);
-        place1.addServiceType("Bakery");
+        place1.addServiceType("Gym");
         System.out.println(place1);
-        place1.addServiceType("Coffee shop"); // Test adding an existing service type
+        place1.addServiceType("Restaurant"); // Test adding an existing service type
         System.out.println(place1);
     }
 
@@ -92,14 +96,14 @@ public class Place {
 
 
 
-    public ArrayList<Integer> getServiceTypeIndexes() {
+    public int getServiceTypeIndexes() {
         return serviceTypeIndexes;
     }
 
 
 
-    public void setServiceTypeIndexes(ArrayList<Integer> serviceTypeIndexes) {
-        this.serviceTypeIndexes = serviceTypeIndexes;
+    public void setServiceTypeIndexes(int serviceTypeIndex) {
+        this.serviceTypeIndexes = serviceTypeIndex;
     }
 
 

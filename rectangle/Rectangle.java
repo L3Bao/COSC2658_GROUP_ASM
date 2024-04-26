@@ -92,9 +92,9 @@ public class Rectangle {
         Rectangle rect = new Rectangle(10, 10, 20, 20);
 
         // Create points to test containment
-        Place insidePoint = new Place(15, 15, null); // Inside the rectangle
-        Place outsidePoint = new Place(35, 25, null); // Outside the rectangle
-        Place boundaryPoint = new Place(10, 10, null); // On the boundary
+        Place insidePoint = new Place(15, 15, 1); // Inside the rectangle
+        Place outsidePoint = new Place(35, 25, 2); // Outside the rectangle
+        Place boundaryPoint = new Place(10, 10, 3); // On the boundary
 
         System.out.println("Does the rectangle contain insidePoint? " + rect.contains(insidePoint));
         System.out.println("Does the rectangle contain outsidePoint? " + rect.contains(outsidePoint));

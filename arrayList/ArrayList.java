@@ -13,17 +13,7 @@ public class ArrayList<T> implements List<T> {
     items = (T[]) new Object[CAPACITY];
   }
 
-  private void ensureCapacity() {
-    if (size >= items.length) {
-        CAPACITY = CAPACITY * 2; // Double the capacity
-        T[] newItems = (T[]) new Object[CAPACITY];
-        System.arraycopy(items, 0, newItems, 0, items.length);
-        items = newItems;
-    }
-  }
-
   public boolean add(T value) {
-//    ensureCapacity();  // Ensure there is enough room for a new element
     return insertAt(size, value);  // Utilize insertAt to place the new element at the end of the list
   }
 
@@ -33,7 +23,6 @@ public class ArrayList<T> implements List<T> {
     if (index > size) {
       return false;
     }
-//    ensureCapacity();  // Ensure capacity before modifying the array
     shiftRight(index);
     items[index] = value;
     size++;
@@ -163,7 +152,26 @@ public class ArrayList<T> implements List<T> {
       items[i - 1] = items[i];
     }
   }
-  
+
+  // Generate the power set of a given string array
+  public static ArrayList<String> generateStringArrayPowerSet(String[] arr) {
+    int arrayLength = arr.length;
+    int totalSubsets = (int) Math.pow(2, arrayLength);
+    ArrayList<String> powerSet = new ArrayList<>(totalSubsets);
+    for (int i = 0; i < totalSubsets; i++) {
+      StringBuilder subsetString = new StringBuilder();
+      for (int j = 0; j < arrayLength; j++) {
+        if ((i & (1 << j)) > 0) {
+          if (subsetString.length() > 0) {
+            subsetString.append(", ");
+          }
+          subsetString.append(arr[j]);
+        }
+      }
+      powerSet.add(subsetString.toString());
+    }
+    return powerSet;
+  }
 
   public static void main(String[] args) {
     List<String> names = new ArrayList<>(5);
@@ -174,6 +182,11 @@ public class ArrayList<T> implements List<T> {
     names.reset();
     while (names.hasNext()) {
       System.out.println(names.next());
+    }
+    String[] aArray = {"Test", "Not Test", "Hospital", "Hot Shot"};
+    List<String> anotherArray = ArrayList.generateStringArrayPowerSet(aArray);
+    while (anotherArray.hasNext()) {
+      System.out.println(anotherArray.next());
     }
     names.insertBefore("RMIT", "SSET");  // SSET, RMIT, Hello, World
     names.insertAfter("World", "4.0");  // SSET, RMIT, Hello, World, 4.0
