@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "QuadTree",
+            "request": "launch",
+            "mainClass": "quadTree.QuadTree",
+            "projectName": "COSC2658_GROUP_ASM_7e298232"
+        },
+        {
+            "type": "java",
             "name": "ArrayList",
             "request": "launch",
             "mainClass": "arrayList.ArrayList",

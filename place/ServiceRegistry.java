@@ -21,4 +21,14 @@ public class ServiceRegistry {
             throw new IndexOutOfBoundsException("Invalid service type index: " + index);
         }
     }
+
+    // Method to find the index of a service type by name
+    public static int getServiceTypeIndex(String serviceName) {
+        for (int i = 0; i < serviceTypes.length; i++) {
+            if (serviceTypes[i].equalsIgnoreCase(serviceName)) { 
+                return i;
+           }
+        }
+        throw new IllegalArgumentException("Service type not found: " + serviceName);
+     }
 }

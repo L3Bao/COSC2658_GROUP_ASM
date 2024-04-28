@@ -1,6 +1,7 @@
 package quadTree;
 
 import place.Place;
+import place.ServiceRegistry;
 import rectangle.Rectangle;
 
 import java.util.Random;
@@ -65,52 +66,70 @@ public class QuadTree {
         return insertIntoSubTree(point);
     }
 
-    public void query(Rectangle range, ArrayList<Place> found) {
+    public void query(Rectangle range, ArrayList<Place> found, int serviceBitmask) {
         if (!boundary.intersects(range)) {
             return;
         }
-
+    
         for (Place point : points.toArray(new Place[0])) {
-            if (range.contains(point)) {
+            if (range.contains(point) && hasAnyService(point, serviceBitmask)) {
                 found.add(point);
             }
         }
-
+    
         if (divided) {
-            northeast.query(range, found);
-            northwest.query(range, found);
-            southeast.query(range, found);
-            southwest.query(range, found);
+            northeast.query(range, found, serviceBitmask);
+            northwest.query(range, found, serviceBitmask);
+            southeast.query(range, found, serviceBitmask);
+            southwest.query(range, found, serviceBitmask);
         }
+    }
+    
+    // Helper function to check if the Place has any of the services 
+    private boolean hasAnyService(Place place, int serviceBitmask) {
+        return (place.getServiceBitmask() & serviceBitmask) != 0;
     }
 
     public static void main(String[] args) {
         // Define the boundary for the entire QuadTree
         Rectangle boundary = new Rectangle(500000, 500000, 10000000, 10000000);
         QuadTree tree = new QuadTree(boundary);
-
-        // Random number generator for place coordinates and service types
+    
+        // Random number generator
         Random random = new Random();
-        int serviceTypeCount = 10; // Total number of different service types
-        int numberOfPlaces = 100_000_000; // Total number of places to insert
-
-        // Inserting a large number of randomly generated places into the QuadTree
+        int serviceTypeCount = ServiceRegistry.getServiceTypes().length; // Get number of services from registry 
+        int numberOfPlaces = 100_000; 
+    
+        // Inserting places with random service types
         for (int i = 0; i < numberOfPlaces; i++) {
             double x = random.nextDouble() * boundary.getW() + boundary.getLeft();
             double y = random.nextDouble() * boundary.getH() + boundary.getTop();
-            int[] serviceTypeIndexes = random.ints(0, serviceTypeCount).distinct().limit(random.nextInt(3) + 1).toArray();
-            tree.insert(new Place(x, y, serviceTypeIndexes));
+    
+            // Generate a random service bitmask
+            int serviceBitmask = 0; 
+            int servicesToEnable = random.nextInt(3) + 1; // Enable 1-3 random services
+            for (int j = 0; j < servicesToEnable; j++) {
+                int serviceIndex = random.nextInt(serviceTypeCount); 
+                serviceBitmask |= (1 << serviceIndex); 
+            }
+    
+            tree.insert(new Place(x, y, serviceBitmask));
         }
-
+    
         System.out.println("Inserted " + numberOfPlaces + " places.");
-
-        // Define a search area within the boundary of the QuadTree
+    
+        // Define a search area 
         Rectangle searchArea = new Rectangle(5500000, 5500000, 1000000, 1000000);
+    
+        // Example: Search for places that have the "Restaurant" service
+        int restaurantIndex = ServiceRegistry.getServiceTypeIndex("Restaurant"); // Get index dynamically
+        int restaurantBitmask = 1 << restaurantIndex;
+    
         ArrayList<Place> found = new ArrayList<>();
-        tree.query(searchArea, found);
-
-        System.out.println("Found " + found.size() + " places in the search area:");
-        for (int i = 0; i < found.size() && i < 50; i++) { // Print up to 50 places for brevity
+        tree.query(searchArea, found, restaurantBitmask); 
+    
+        System.out.println("Found " + found.size() + " places with the Restaurant service in the search area:");
+        for (int i = 0; i < found.size() && i < 50; i++) { 
             System.out.println(found.get(i));
         }
     }

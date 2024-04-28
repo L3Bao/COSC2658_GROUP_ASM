@@ -19,6 +19,10 @@ public class Place {
         return y;
     }
 
+    public int getServiceBitmask() {
+        return serviceBitmask;
+    }
+
     // This method now uses the bitmask to check service presence
     public String getServiceTypeNames(ServiceRegistry registry) {
         StringBuilder sb = new StringBuilder();
