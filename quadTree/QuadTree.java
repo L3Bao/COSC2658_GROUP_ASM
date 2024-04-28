@@ -66,14 +66,16 @@ public class QuadTree {
         return insertIntoSubTree(point);
     }
 
-    public void query(Rectangle range, ArrayList<Place> found, int serviceBitmask) {
+    public void query(Rectangle range, ArrayList<Place> found, Integer serviceBitmask) {
         if (!boundary.intersects(range)) {
             return;
         }
     
         for (Place point : points.toArray(new Place[0])) {
-            if (range.contains(point) && hasAnyService(point, serviceBitmask)) {
-                found.add(point);
+            if (range.contains(point)) {
+                if (serviceBitmask == null || hasAnyService(point, serviceBitmask)) { // Check for optional filtering
+                    found.add(point);
+                }
             }
         }
     
@@ -92,7 +94,7 @@ public class QuadTree {
 
     public static void main(String[] args) {
         // Define the boundary for the entire QuadTree
-        Rectangle boundary = new Rectangle(500000, 500000, 10000000, 10000000);
+        Rectangle boundary = new Rectangle(0, 0, 10000000, 10000000);
         QuadTree tree = new QuadTree(boundary);
     
         // Random number generator
@@ -119,16 +121,14 @@ public class QuadTree {
         System.out.println("Inserted " + numberOfPlaces + " places.");
     
         // Define a search area 
-        Rectangle searchArea = new Rectangle(5500000, 5500000, 1000000, 1000000);
+        Rectangle searchArea = new Rectangle(0, 0, 5000000, 5000000);
     
-        // Example: Search for places that have the "Restaurant" service
-        int restaurantIndex = ServiceRegistry.getServiceTypeIndex("Restaurant"); // Get index dynamically
-        int restaurantBitmask = 1 << restaurantIndex;
+        
     
         ArrayList<Place> found = new ArrayList<>();
-        tree.query(searchArea, found, restaurantBitmask); 
+        tree.query(searchArea, found, null); 
     
-        System.out.println("Found " + found.size() + " places with the Restaurant service in the search area:");
+        System.out.println("Found " + found.size() + " places with the any services in the search area:");
         for (int i = 0; i < found.size() && i < 50; i++) { 
             System.out.println(found.get(i));
         }
