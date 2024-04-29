@@ -22,16 +22,12 @@ public class QuadTree {
     }
 
     private void subdivide() {
-        double halfWidth = boundary.getW() / 2;
-        double halfHeight = boundary.getH() / 2;
-        double x = boundary.getX();
-        double y = boundary.getY();
-
-        northeast = new QuadTree(new Rectangle(x + halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight));
-        northwest = new QuadTree(new Rectangle(x - halfWidth / 2, y - halfHeight / 2, halfWidth, halfHeight));
-        southeast = new QuadTree(new Rectangle(x + halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight));
-        southwest = new QuadTree(new Rectangle(x - halfWidth / 2, y + halfHeight / 2, halfWidth, halfHeight));
-
+        // Utilizing the Rectangle's subdivide method
+        northeast = new QuadTree(boundary.subdivide("ne"));
+        northwest = new QuadTree(boundary.subdivide("nw"));
+        southeast = new QuadTree(boundary.subdivide("se"));
+        southwest = new QuadTree(boundary.subdivide("sw"));
+    
         divided = true;
         redistributePlaces();
     }
@@ -54,16 +50,26 @@ public class QuadTree {
 
     public boolean insert(Place point) {
         if (!boundary.contains(point)) {
-            return false;
+            return false; // Point is outside the boundary
         }
+    
         if (points.size() < MAX_CAPACITY && !divided) {
             points.add(point);
-            return true;
+            return true; // Point inserted successfully
         }
+    
         if (!divided) {
             subdivide();
         }
-        return insertIntoSubTree(point);
+    
+        // Attempt to insert the point into one of the subtrees
+        if (insertIntoSubTree(point)) {
+            return true; // Point inserted into a subtree
+        }
+    
+        // If the point couldn't be inserted into any subtree:
+        points.add(point); // Add to the current node (basic overflow handling)
+        return true;
     }
 
     public void query(Rectangle range, ArrayList<Place> found, Integer serviceBitmask) {
@@ -100,7 +106,7 @@ public class QuadTree {
         // Random number generator
         Random random = new Random();
         int serviceTypeCount = ServiceRegistry.getServiceTypes().length; // Get number of services from registry 
-        int numberOfPlaces = 100_000; 
+        int numberOfPlaces = 50_000_000;
     
         // Inserting places with random service types
         for (int i = 0; i < numberOfPlaces; i++) {
