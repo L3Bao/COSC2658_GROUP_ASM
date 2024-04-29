@@ -75,25 +75,33 @@ public class Rectangle {
     }
 
     public Rectangle subdivide(Quadrant quadrant) {
-        double quarterW = this.w / 4;
-        double quarterH = this.h / 4;
-        double halfW = this.w / 2;
-        double halfH = this.h / 2;
-
+        double newW = w / 2;
+        double newH = h / 2;
+        double newX, newY;
+    
         switch (quadrant) {
             case NE:
-                return new Rectangle(this.x + quarterW, this.y - quarterH, halfW, halfH);
+                newX = x + newW / 2;
+                newY = y - newH / 2;
+                break;
             case NW:
-                return new Rectangle(this.x - quarterW, this.y - quarterH, halfW, halfH);
+                newX = x - newW / 2;
+                newY = y - newH / 2;
+                break;
             case SE:
-                return new Rectangle(this.x + quarterW, this.y + quarterH, halfW, halfH);
+                newX = x + newW / 2;
+                newY = y + newH / 2;
+                break;
             case SW:
-                return new Rectangle(this.x - quarterW, this.y + quarterH, halfW, halfH);
+                newX = x - newW / 2;
+                newY = y + newH / 2;
+                break;
             default:
                 throw new IllegalArgumentException("Invalid quadrant specified");
         }
+        return new Rectangle(newX, newY, newW, newH);
     }
-
+    
     @Override
     public String toString() {
         return String.format("Rectangle[x=%.2f, y=%.2f, w=%.2f, h=%.2f, left=%.2f, right=%.2f, top=%.2f, bottom=%.2f]",
