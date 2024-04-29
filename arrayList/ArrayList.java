@@ -1,6 +1,9 @@
 package arrayList;
+import iterable.Iterable;
+import iterable.Iterator;
+import place.Place;
 
-public class ArrayList<T> {
+public class ArrayList<T> implements Iterable<T> {
     private Object[] elements;
     private int size = 0;
     private static final int DEFAULT_CAPACITY = 10;
@@ -21,11 +24,13 @@ public class ArrayList<T> {
         }
     }
 
-    public void add(T element) {
-        ensureCapacity(size + 1);
-        elements[size++] = element;
+    public boolean add(T element) {
+        ensureCapacity(size + 1);  // Ensure there is enough space
+        elements[size++] = element;  // Add the element
+        return true;  // Return true as the operation is always successful
     }
 
+    
     public T get(int index) {
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -44,21 +49,54 @@ public class ArrayList<T> {
         size = 0;
     }
 
-    public void trimToSize() {
-        if (size < elements.length) {
-            elements = java.util.Arrays.copyOf(elements, size);
+    public void addAll(ArrayList<T> other) {
+        Iterator<T> iterator = other.iterator();
+        while (iterator.hasNext()) {
+            this.add(iterator.next());
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public T[] toArray(T[] a) {
-        if (a.length < size) {
-            return (T[]) java.util.Arrays.copyOf(elements, size, a.getClass());
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new ArrayListIterator();
+    }
+
+    @Override
+    public String toString() {
+        if (size == 0) {
+            return "[]";
         }
-        System.arraycopy(elements, 0, a, 0, size);
-        if (a.length > size) {
-            a[size] = null;
+        StringBuilder sb = new StringBuilder();
+        sb.append('[');
+        for (int i = 0; i < size; i++) {
+            sb.append(elements[i].toString());
+            if (i < size - 1) {
+                sb.append(", ");
+            }
         }
-        return a;
+        sb.append(']');
+        return sb.toString();
+    }
+
+    private class ArrayListIterator implements Iterator<T> {
+        private int currentIndex = 0;
+
+        @Override
+        public boolean hasNext() {
+            return currentIndex < size;
+        }
+
+        
+        @Override
+        public T next() {
+            if (!hasNext()) {
+                throw new IllegalStateException("No more elements");
+            }
+            return (T) elements[currentIndex++];
+        }
     }
 }

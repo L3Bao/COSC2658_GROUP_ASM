@@ -29,11 +29,13 @@ public class Place {
         int serviceIndex = 0;
         int bitmask = this.serviceBitmask;
         while (bitmask != 0) {
-            if ((bitmask & 1) == 1) { // Check the lowest bit
-                if (sb.length() > 0) sb.append(", ");
+            if ((bitmask & 1) == 1) {
+                if (sb.length() > 0) {
+                    sb.append(", ");
+                }
                 sb.append(registry.getServiceType(serviceIndex));
             }
-            bitmask >>>= 1; // Shift right and fill with zero
+            bitmask >>>= 1;  // Logical right shift to process next bit
             serviceIndex++;
         }
         return sb.toString();

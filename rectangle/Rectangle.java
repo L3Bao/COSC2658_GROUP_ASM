@@ -5,29 +5,59 @@ import place.Place;
 public class Rectangle {
     private double x, y; // Center of the rectangle
     private double w, h; // Width and height of the rectangle
+    private double left, right, top, bottom; // Cached boundaries
+    private boolean boundariesNeedUpdate = true; // Flag to track when boundaries need recalculating
 
     public Rectangle(double x, double y, double w, double h) {
         this.x = x;
         this.y = y;
         this.w = w;
         this.h = h;
+        updateBoundaries();
     }
 
-    // Calculate edges on-demand to save memory
+    private void updateBoundaries() {
+        this.left = x - w / 2;
+        this.right = x + w / 2;
+        this.top = y - h / 2;
+        this.bottom = y + h / 2;
+        boundariesNeedUpdate = false;
+    }
+
+    public double getW() {
+        return w;
+    }
+
+    public double getH() {
+        return h;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
     public double getLeft() {
-        return x - w / 2;
+        if (boundariesNeedUpdate) updateBoundaries();
+        return left;
     }
 
     public double getRight() {
-        return x + w / 2;
+        if (boundariesNeedUpdate) updateBoundaries();
+        return right;
     }
 
     public double getTop() {
-        return y - h / 2;
+        if (boundariesNeedUpdate) updateBoundaries();
+        return top;
     }
 
     public double getBottom() {
-        return y + h / 2;
+        if (boundariesNeedUpdate) updateBoundaries();
+        return bottom;
     }
 
     public boolean contains(Place point) {
@@ -40,32 +70,28 @@ public class Rectangle {
                 getBottom() < range.getTop() || range.getBottom() < getTop());
     }
 
-    public Rectangle subdivide(String quadrant) {
+    public enum Quadrant {
+        NE, NW, SE, SW
+    }
+
+    public Rectangle subdivide(Quadrant quadrant) {
+        double quarterW = this.w / 4;
+        double quarterH = this.h / 4;
         double halfW = this.w / 2;
         double halfH = this.h / 2;
-        double newX, newY;
 
         switch (quadrant) {
-            case "ne":
-                newX = this.x + halfW / 2;
-                newY = this.y - halfH / 2;
-                break;
-            case "nw":
-                newX = this.x - halfW / 2;
-                newY = this.y - halfH / 2;
-                break;
-            case "se":
-                newX = this.x + halfW / 2;
-                newY = this.y + halfH / 2;
-                break;
-            case "sw":
-                newX = this.x - halfW / 2;
-                newY = this.y + halfH / 2;
-                break;
+            case NE:
+                return new Rectangle(this.x + quarterW, this.y - quarterH, halfW, halfH);
+            case NW:
+                return new Rectangle(this.x - quarterW, this.y - quarterH, halfW, halfH);
+            case SE:
+                return new Rectangle(this.x + quarterW, this.y + quarterH, halfW, halfH);
+            case SW:
+                return new Rectangle(this.x - quarterW, this.y + quarterH, halfW, halfH);
             default:
                 throw new IllegalArgumentException("Invalid quadrant specified");
         }
-        return new Rectangle(newX, newY, halfW, halfH);
     }
 
     @Override
@@ -74,35 +100,24 @@ public class Rectangle {
                 x, y, w, h, getLeft(), getRight(), getTop(), getBottom());
     }
 
-    public double getX() {
-        return x;
-    }
-
+    // Setters that mark boundaries for update
     public void setX(double x) {
         this.x = x;
-    }
-
-    public double getY() {
-        return y;
+        boundariesNeedUpdate = true;
     }
 
     public void setY(double y) {
         this.y = y;
-    }
-
-    public double getW() {
-        return w;
+        boundariesNeedUpdate = true;
     }
 
     public void setW(double w) {
         this.w = w;
-    }
-
-    public double getH() {
-        return h;
+        boundariesNeedUpdate = true;
     }
 
     public void setH(double h) {
         this.h = h;
+        boundariesNeedUpdate = true;
     }
 }
