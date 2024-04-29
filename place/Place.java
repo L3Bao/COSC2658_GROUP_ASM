@@ -1,26 +1,38 @@
 package place;
 
 public class Place {
-    private double x;
-    private double y;
-    private int serviceBitmask;  // Use a bitmask to store service presence
+    private float x; // Using float instead of double
+    private float y; // Using float instead of double
+    private int serviceBitmask; // Using int directly for services, assuming bitmasking fits in int
 
-    public Place(double x, double y, int serviceBitmask) {
+    public Place(float x, float y, int serviceBitmask) {
         this.x = x;
         this.y = y;
         this.serviceBitmask = serviceBitmask;
     }
 
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public double getY() {
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
         return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
     }
 
     public int getServiceBitmask() {
         return serviceBitmask;
+    }
+
+    public void setServiceBitmask(int serviceBitmask) {
+        this.serviceBitmask = serviceBitmask;
     }
 
     // This method now uses the bitmask to check service presence
