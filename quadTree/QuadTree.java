@@ -11,7 +11,7 @@ import arrayList.ArrayList;
 import iterable.Iterator;
 
 public class QuadTree {
-    private static final int INITIAL_CAPACITY = 4;
+    private static final int INITIAL_CAPACITY = 10;
     private Rectangle boundary;
     private ArrayList<Place> points;
     private boolean divided;
