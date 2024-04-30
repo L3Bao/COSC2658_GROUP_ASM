@@ -139,6 +139,131 @@ public class QuadTree {
         }
     }
 
+    public void editPlaceService(float x, float y, String action, String serviceType) {
+        // Find the place in the QuadTree
+        Place place = findPlace(x, y);
+        if (place == null) {
+            System.out.println("Place not found at coordinates (" + x + ", " + y + ")");
+            return;
+        }
+
+        // Determine the service index
+        int serviceIndex = ServiceRegistry.getServiceTypeIndex(serviceType);
+
+        // Check if the place already has the specified service
+        boolean hasService = place.isServiceEnabled(serviceIndex);
+
+        // Update the place's service bitmask based on the action
+        if (action.equalsIgnoreCase("add")) {
+            if (hasService) {
+                System.out.println("Place already has service '" + serviceType + "'");
+            } else {
+                place.toggleService(serviceIndex, true);
+                System.out.println("Service '" + serviceType + "' added to the place at coordinates (" + x + ", " + y + ")");
+            }
+        } else if (action.equalsIgnoreCase("remove")) {
+            if (!hasService) {
+                System.out.println("Place does not have service '" + serviceType + "'");
+            } else {
+                place.toggleService(serviceIndex, false);
+                System.out.println("Service '" + serviceType + "' removed from the place at coordinates (" + x + ", " + y + ")");
+            }
+        } else {
+            System.out.println("Invalid action. Please specify 'add' or 'remove'.");
+        }
+    }
+
+
+    public void removePlace(float x, float y) {
+        // Find the place in the QuadTree
+        Place place = findPlace(x, y);
+        if (place == null) {
+            System.out.println("Place not found at coordinates (" + x + ", " + y + ")");
+            return;
+        }
+
+        // Remove the place from the QuadTree
+        if (remove(place)) {
+            System.out.println("Place removed successfully at coordinates (" + x + ", " + y + ")");
+        } else {
+            System.out.println("Failed to remove place at coordinates (" + x + ", " + y + ")");
+        }
+    }
+
+    // Helper method to find a place in the QuadTree based on coordinates
+    private Place findPlace(float x, float y) {
+        ArrayList<Place> found = new ArrayList<>();
+        query(new Rectangle(x, y, 1, 1), found, null); // Search a small area around the point
+        for (int i = 0; i < found.size(); i++) {
+            if (found.get(i).getX() == x && found.get(i).getY() == y) {
+                return found.get(i);
+            }
+        }
+        return null; // Place not found
+    }
+
+    // Helper method to remove a place from the QuadTree
+    private boolean remove(Place place) {
+        // Find the QuadTree node containing the place
+        QuadTree containingNode = findContainingNode(place.getX(), place.getY(), this);
+        if (containingNode == null) {
+            return false; // Place not found in the QuadTree
+        }
+
+        // Remove the place from the containing node
+        containingNode.points.remove(place);
+
+        // Merge nodes if necessary
+        containingNode.tryMerge();
+
+        return true;
+    }
+
+    // Helper method to find the QuadTree node containing a specific point
+    private QuadTree findContainingNode(float x, float y, QuadTree node) {
+        if (node.boundary.contains(x, y)) {
+            if (!node.divided) {
+                return node; // Found leaf node containing the point
+            }
+            // Recursively search child nodes
+            if (node.northeast != null && node.northeast.boundary.contains(x, y)) {
+                return findContainingNode(x, y, node.northeast);
+            }
+            if (node.northwest != null && node.northwest.boundary.contains(x, y)) {
+                return findContainingNode(x, y, node.northwest);
+            }
+            if (node.southeast != null && node.southeast.boundary.contains(x, y)) {
+                return findContainingNode(x, y, node.southeast);
+            }
+            if (node.southwest != null && node.southwest.boundary.contains(x, y)) {
+                return findContainingNode(x, y, node.southwest);
+            }
+        }
+        return null; // Point not found in any node
+    }
+
+    // Helper method to try merging child nodes into the parent node
+    private void tryMerge() {
+        if (!divided) {
+            return; // No child nodes to merge
+        }
+        // Check if all child nodes are empty
+        if (northeast.isEmpty() && northwest.isEmpty() && southeast.isEmpty() && southwest.isEmpty()) {
+            // Merge child nodes into the parent node
+            northeast = null;
+            northwest = null;
+            southeast = null;
+            southwest = null;
+            divided = false;
+        }
+    }
+
+    // Helper method to check if a node's point list is empty
+    private boolean isEmpty() {
+        return points.isEmpty();
+    }
+
+
     public static void main(String[] args) {
         // Create a QuadTree with a large boundary covering the whole map.
         Rectangle boundary = new Rectangle(0, 0, 10000000, 10000000);
@@ -146,7 +271,7 @@ public class QuadTree {
         Random random = new Random();
         ArrayList<Place> batch = new ArrayList<>();
         int batchSize = 1000; // Define an optimal batch size
-        int numberOfPoints = 100_000_000; // Total number of points to insert
+        int numberOfPoints = 10_000_000; // Total number of points to insert
     
         // Define the center of the query area
         float areaSize = 100000;
@@ -199,6 +324,27 @@ public class QuadTree {
         for (int i = 0; i < Math.min(50, found.size()); i++) {
             System.out.println(found.get(i));
         }
+
+        System.out.println("The lucky chosen place to be edit and remove is:\n" + found.get(35));
+
+        // Test editing a place's services
+        float testX = found.get(35).getX();
+        float testY = found.get(35).getY();
+        String action = "add"; // or "remove"
+        String serviceType = "Restaurant"; // or any other service type
+        tree.editPlaceService(testX, testY, action, serviceType);
+
+        System.out.println("The chosen place after service edit:\n" + found.get(35));
+        System.out.println("Removing the chosen place...");
+
+        tree.removePlace(testX, testY);
+
+        System.out.println("Query the same area again to check if the place have been remove or not: ");
+
+        ArrayList<Place> foundTest = new ArrayList<>();
+        tree.query(searchArea, foundTest, null);
+
+        System.out.printf("Found %d places within the search area.%n", foundTest.size());
     }
     
     private static int generateServiceBitmask(Random random, int serviceTypeCount) {
@@ -209,6 +355,4 @@ public class QuadTree {
         }
         return serviceBitmask;
     }
-    
-
 }

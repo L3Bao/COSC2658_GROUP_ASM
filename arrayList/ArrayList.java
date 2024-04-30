@@ -81,6 +81,19 @@ public class ArrayList<T> implements Iterable<T> {
         size = 0;
     }
 
+    public boolean remove(T element) {
+        for (int i = 0; i < size; i++) {
+            if (elements[i].equals(element)) {
+                // Shift elements to the left to fill the gap
+                System.arraycopy(elements, i + 1, elements, i, size - i - 1);
+                elements[--size] = null; // Clear the reference to the removed element
+                return true;
+            }
+        }
+        return false; // Element not found
+    }
+
+
     public void addAll(ArrayList<T> other) {
         ensureCapacity(size + other.size());  // Ensure there is enough space for all elements
         System.arraycopy(other.elements, 0, this.elements, size, other.size());  // Efficient array copying

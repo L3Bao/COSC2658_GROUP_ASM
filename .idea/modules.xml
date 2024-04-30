@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/COSC2658_GROUP_ASM.iml" filepath="$PROJECT_DIR$/.idea/COSC2658_GROUP_ASM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/COSC2658_GROUP_ASM.iml" filepath="$PROJECT_DIR$/COSC2658_GROUP_ASM.iml" />
     </modules>
   </component>
 </project>
