@@ -3,20 +3,21 @@ import iterable.Iterable;
 import iterable.Iterator;
 
 public class ArrayList<T> implements Iterable<T> {
-    private Object[] elements;
+    private T[] elements;
     private int size = 0;
     private static final int DEFAULT_CAPACITY = 4;
 
     public ArrayList() {
-        elements = new Object[DEFAULT_CAPACITY];
+        this(DEFAULT_CAPACITY);
     }
 
     // Constructor with initial capacity to prevent resizing at early stages if the expected size is known
+    @SuppressWarnings("unchecked")
     public ArrayList(int initialCapacity) {
         if (initialCapacity > 0) {
-            elements = new Object[initialCapacity];
+            elements = (T[]) new Object[initialCapacity];
         } else if (initialCapacity == 0) {
-            elements = new Object[0];
+            elements = (T[]) new Object[DEFAULT_CAPACITY];
         } else {
             throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
         }
@@ -28,6 +29,7 @@ public class ArrayList<T> implements Iterable<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void grow(int minCapacity) {
         int oldCapacity = elements.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
@@ -37,7 +39,15 @@ public class ArrayList<T> implements Iterable<T> {
         if (newCapacity - Integer.MAX_VALUE > 0) {
             newCapacity = hugeCapacity(minCapacity);
         }
-        elements = java.util.Arrays.copyOf(elements, newCapacity);
+
+
+        elements = (T[]) copyOf(elements, newCapacity);
+    }
+
+    private Object[] copyOf(Object[] original, int newLength) {
+        Object[] copy = new Object[newLength];
+        System.arraycopy(original, 0, copy, 0, Math.min(original.length, newLength));
+        return copy;
     }
 
     private int hugeCapacity(int minCapacity) {
@@ -48,14 +58,9 @@ public class ArrayList<T> implements Iterable<T> {
     }
 
     public boolean add(T element) {
-        try {
-            ensureCapacity(size + 1);  // Ensure there is enough space
-            elements[size++] = element;  // Add the element
-            return true;  // Return true as the operation is always successful
-        } catch (OutOfMemoryError e) {
-            // Handle memory errors gracefully
-            return false;
-        }
+        ensureCapacity(size + 1);
+        elements[size++] = element;
+        return true;
     }
 
     public T get(int index) {

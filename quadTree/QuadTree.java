@@ -149,8 +149,6 @@ public class QuadTree {
         int numberOfPoints = 100_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        float centerX = 5000000;
-        float centerY = 5000000;
         float areaSize = 100000;
 
         long startInsertTime = System.nanoTime();
@@ -183,7 +181,7 @@ public class QuadTree {
         System.out.printf("Insertion of %d places completed in %.2f ms.%n", numberOfPoints, (endInsertTime - startInsertTime) / 1e6);
     
         // Define the query area as a smaller rectangle within the map
-        Rectangle searchArea = new Rectangle(centerX - areaSize / 2, centerY - areaSize / 2, areaSize, areaSize);
+        Rectangle searchArea = new Rectangle(0, 0, areaSize, areaSize);
         ArrayList<Place> found = new ArrayList<>();
     
         // Time the query performance
