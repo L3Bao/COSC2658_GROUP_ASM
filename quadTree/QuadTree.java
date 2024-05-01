@@ -30,9 +30,16 @@ public class QuadTree {
     }
 
     private void subdivide() {
-        if (divided || points.isEmpty()) return; // Avoid unnecessary subdivision if already divided or no points to subdivide
+        if (divided) {
+            return;  // Prevent redundant subdivisions if already divided
+        }
     
-        divided = true;  // Mark as divided early to prevent multiple subdivisions in recursive insertions
+        // Ensure there are enough points to justify a subdivision
+        if (points.size() <= getCurrentCapacity()) {
+            return;
+        }
+
+        divided = true;  // Mark as divided
     
         float halfWidth = boundary.getW() / 2;
         float halfHeight = boundary.getH() / 2;
@@ -50,10 +57,15 @@ public class QuadTree {
     }
     
     private void redistributePoints() {
-        ArrayList<Place> tempPoints = new ArrayList<>(); // Copy to a temporary list to avoid ConcurrentModificationException
-        points.clear(); // Clear original points list since they'll be reinserted into child quadrants
+        ArrayList<Place> redistributedPoints = new ArrayList<>(points.size());
+        Iterator<Place> iterating = points.iterator();
+        while (iterating.hasNext()) {
+            Place point = iterating.next();
+            redistributedPoints.add(point);
+        }
+        points.clear();  // Clear the points as they will be reinserted into new quadrants
     
-        iterable.Iterator<Place> iterator = tempPoints.iterator();
+        Iterator<Place> iterator = redistributedPoints.iterator();
         while (iterator.hasNext()) {
             Place point = iterator.next();
             if (!insert(point)) { // Reinsert points into the correct quadrant
@@ -67,6 +79,7 @@ public class QuadTree {
     public boolean insert(Place point) {
         // Check if the point is within the boundary of the current quad
         if (!boundary.contains(point.getX(), point.getY())) {
+            System.err.println("Point out of bounds: " + point + " for boundary: " + boundary);
             return false;  // Skip insertion if point is out of bounds
         }
     
@@ -81,16 +94,37 @@ public class QuadTree {
             return true;
         }
     
-        // Recursively insert the point into the appropriate subdivided quadrant
-        if (northeast != null && northeast.insert(point)) return true;
-        if (northwest != null && northwest.insert(point)) return true;
-        if (southeast != null && southeast.insert(point)) return true;
-        if (southwest != null && southwest.insert(point)) return true;
+        // Determine the appropriate quadrant for the point
+        float midX = boundary.getX() + boundary.getW() / 2;
+        float midY = boundary.getY() + boundary.getH() / 2;
+        boolean right = point.getX() >= midX;
+        boolean top = point.getY() >= midY;
+    
+        QuadTree targetQuadrant = null;
+        if (right) {
+            if (top) {
+                targetQuadrant = northeast;
+            } else {
+                targetQuadrant = southeast;
+            }
+        } else {
+            if (top) {
+                targetQuadrant = northwest;
+            } else {
+                targetQuadrant = southwest;
+            }
+        }
+    
+        // Attempt to insert the point in the determined quadrant
+        if (targetQuadrant != null && targetQuadrant.insert(point)) {
+            return true;
+        }
     
         // If no quadrant could insert the point, it's an error (this should not normally happen)
-        System.err.println("Insertion failed for point: " + point + " in all quadrants.");
+        System.err.println("Insertion failed for point: " + point + " in all quadrants, even though it should be in one.");
         return false;
     }
+    
     
     
     public void query(Rectangle range, ArrayList<Place> found, Integer serviceBitmask) {
@@ -122,21 +156,28 @@ public class QuadTree {
 
     public void insertBatch(ArrayList<Place> batch) {
         if (batch.isEmpty()) return;
-
+    
+    
         if (!divided && points.size() + batch.size() > getCurrentCapacity()) {
+            
             subdivide();
         }
+        
         if (!divided) {
             points.addAll(batch);
             return;
-        }
-        Iterator<Place> iterator = batch.iterator();
-        while (iterator.hasNext()) {
-            Place point = iterator.next();
-            if (!insert(point)) {
-                System.err.println("Failed to insert point: " + point);
+        } else {
+            Iterator<Place> iterator = batch.iterator();
+            while (iterator.hasNext()) {
+                Place point = iterator.next();
+                boolean inserted = insert(point);
+                if (!inserted) {
+                    System.err.println("Failed to insert point: " + point + " at boundary: " + boundary);
+                }
             }
         }
+    
+        
     }
 
     public void editPlaceService(float x, float y, String action, String serviceType) {
@@ -266,15 +307,15 @@ public class QuadTree {
 
     public static void main(String[] args) {
         // Create a QuadTree with a large boundary covering the whole map.
-        Rectangle boundary = new Rectangle(0, 0, 10000000, 10000000);
+        Rectangle boundary = new Rectangle(0, 0, 10_000_000, 10_000_000);
         QuadTree tree = new QuadTree(boundary, 0);
         Random random = new Random();
         ArrayList<Place> batch = new ArrayList<>();
-        int batchSize = 1000; // Define an optimal batch size
-        int numberOfPoints = 10_000_000; // Total number of points to insert
+        int batchSize = 10000; // Define an optimal batch size
+        int numberOfPoints = 100_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        float areaSize = 100000;
+        float areaSize = 100_000;
 
         long startInsertTime = System.nanoTime();
     
@@ -295,7 +336,7 @@ public class QuadTree {
                 batch.clear(); // Clear the batch after insertion to free up memory
             }
         }
-    
+        
         // Insert any remaining points in the batch
         if (!batch.isEmpty()) {
             tree.insertBatch(batch);
