@@ -14,7 +14,7 @@ public class ServiceRegistry {
     }
 
     // Method to get a specific service type by index
-    public String getServiceType(int index) {
+    public static String getServiceType(int index) {
         if (index >= 0 && index < serviceTypes.length) {
             return serviceTypes[index];
         } else {

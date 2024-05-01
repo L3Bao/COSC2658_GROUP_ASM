@@ -215,24 +215,26 @@ public class QuadTree {
     }
 
 
-    public void removePlace(float x, float y) {
+    public boolean removePlace(float x, float y) {
         // Find the place in the QuadTree
         Place place = findPlace(x, y);
         if (place == null) {
             System.out.println("Place not found at coordinates (" + x + ", " + y + ")");
-            return;
+            return false;
         }
 
         // Remove the place from the QuadTree
         if (remove(place)) {
             System.out.println("Place removed successfully at coordinates (" + x + ", " + y + ")");
+            return true;
         } else {
             System.out.println("Failed to remove place at coordinates (" + x + ", " + y + ")");
         }
+        return false;
     }
 
     // Helper method to find a place in the QuadTree based on coordinates
-    private Place findPlace(float x, float y) {
+    public Place findPlace(float x, float y) {
         ArrayList<Place> found = new ArrayList<>();
         query(new Rectangle(x, y, 1, 1), found, null); // Search a small area around the point
         for (int i = 0; i < found.size(); i++) {
@@ -311,7 +313,7 @@ public class QuadTree {
         QuadTree tree = new QuadTree(boundary, 0);
         Random random = new Random();
         ArrayList<Place> batch = new ArrayList<>();
-        int batchSize = 10000; // Define an optimal batch size
+        int batchSize = 10_000; // Define an optimal batch size
         int numberOfPoints = 100_000_000; // Total number of points to insert
     
         // Define the center of the query area

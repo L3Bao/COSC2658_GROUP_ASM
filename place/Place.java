@@ -36,19 +36,19 @@ public class Place {
     }
 
     // This method now uses the bitmask to check service presence
-    public String getServiceTypeNames(ServiceRegistry registry) {
+    public String getServiceTypeNames() {
         StringBuilder sb = new StringBuilder();
-        int serviceIndex = 0;
         int bitmask = this.serviceBitmask;
+        int index = 0;
         while (bitmask != 0) {
             if ((bitmask & 1) == 1) {
                 if (sb.length() > 0) {
                     sb.append(", ");
                 }
-                sb.append(registry.getServiceType(serviceIndex));
+                sb.append(ServiceRegistry.getServiceType(index));  // Fetch the service name using the index
             }
-            bitmask >>>= 1;  // Logical right shift to process next bit
-            serviceIndex++;
+            bitmask >>>= 1;
+            index++;
         }
         return sb.toString();
     }
@@ -69,6 +69,6 @@ public class Place {
 
     @Override
     public String toString() {
-        return "Place{x=" + x + ", y=" + y + ", serviceBitmask=" + Integer.toBinaryString(serviceBitmask) + "}";
+        return "Place{x=" + x + ", y=" + y + ", services=" + getServiceTypeNames() + "}";
     }
 }
