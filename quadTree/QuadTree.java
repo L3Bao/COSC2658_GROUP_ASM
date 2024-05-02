@@ -25,6 +25,10 @@ public class QuadTree {
         this.depth = depth;
     }
 
+    public Rectangle getBoundary() {
+        return boundary;
+    }
+
     private int getCurrentCapacity() {
         return INITIAL_CAPACITY + (int) (Math.log(depth + 1) * INITIAL_CAPACITY);
     }
@@ -390,7 +394,7 @@ public class QuadTree {
         System.out.printf("Found %d places within the search area.%n", foundTest.size());
     }
     
-    private static int generateServiceBitmask(Random random, int serviceTypeCount) {
+    public static int generateServiceBitmask(Random random, int serviceTypeCount) {
         int serviceBitmask = 0;
         int countServices = random.nextInt(3) + 1;
         for (int j = 0; j < countServices; j++) {
