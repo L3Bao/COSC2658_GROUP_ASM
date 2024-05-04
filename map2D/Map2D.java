@@ -9,17 +9,30 @@ import java.util.Scanner;
 
 public class Map2D {
     private QuadTree root;
+    private ArrayList<Place> batch;
+    private static final int BATCH_SIZE = 10000;
     private static final float MAP_WIDTH = 10000000;  // Example map width
     private static final float MAP_HEIGHT = 10000000; // Example map height
 
     public Map2D() {
         this.root = new QuadTree(new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT), 0);
+        this.batch = new ArrayList<>();
     }
 
     // Add a place to the map
     public void addPlace(float x, float y, int serviceBitmask) {
         Place newPlace = new Place(x, y, serviceBitmask);
-        root.insert(newPlace);
+        batch.add(newPlace);
+        if (batch.size() == BATCH_SIZE) {
+            flushBatch(); // Insert the batch to the QuadTree and clear it
+        }
+    }
+
+    public void flushBatch() {
+        if (!batch.isEmpty()) {
+            root.insertBatch(batch);
+            batch.clear(); // Clear the batch after insertion to free up memory
+        }
     }
 
     // Edit services of a place
@@ -67,11 +80,11 @@ public class Map2D {
 
         // Adding places with various services
         Random random = new Random();
-        for (int i = 0; i < 100_000_000; i++) {
+        for (int i = 0; i < 10_000_000; i++) {
             // Randomly distribute points across the entire boundary to ensure a uniform spread
             float x = random.nextFloat() * Map2D.MAP_WIDTH;
             float y = random.nextFloat() * Map2D.MAP_HEIGHT;
-            int serviceBitmask = map.root.generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
+            int serviceBitmask = QuadTree.generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
 
             map.addPlace(x, y, serviceBitmask);
         }

@@ -318,7 +318,7 @@ public class QuadTree {
         Random random = new Random();
         ArrayList<Place> batch = new ArrayList<>();
         int batchSize = 10_000; // Define an optimal batch size
-        int numberOfPoints = 100_000_000; // Total number of points to insert
+        int numberOfPoints = 10_000_000; // Total number of points to insert
     
         // Define the center of the query area
         float areaSize = 100_000;
