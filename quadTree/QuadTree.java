@@ -305,7 +305,7 @@ public class QuadTree {
     }
 
 
-    /* public static void main(String[] args) {
+    public static void main(String[] args) {
         // Create a QuadTree with a large boundary covering the whole map.
         Rectangle boundary = new Rectangle(0, 0, 10_000_000, 10_000_000);
         QuadTree tree = new QuadTree(boundary, 0);
@@ -386,7 +386,7 @@ public class QuadTree {
         tree.query(searchArea, foundTest, null);
 
         System.out.printf("Found %d places within the search area.%n", foundTest.size());
-    } */
+    }
     
     public static int generateServiceBitmask(Random random, int serviceTypeCount) {
         int serviceBitmask = 0;
