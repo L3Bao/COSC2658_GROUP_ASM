@@ -33,12 +33,7 @@ public class QuadTree {
     }
 
     private void subdivide() {
-        if (divided) {
-            return;  // Prevent redundant subdivisions if already divided
-        }
-    
-        // Ensure there are enough points to justify a subdivision
-        if (points.size() <= getCurrentCapacity()) {
+        if (divided || points.size() <= getCurrentCapacity()) {
             return;
         }
 
