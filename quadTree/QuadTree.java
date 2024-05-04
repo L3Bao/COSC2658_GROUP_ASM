@@ -33,10 +33,6 @@ public class QuadTree {
     }
 
     private void subdivide() {
-        if (divided || points.size() <= getCurrentCapacity()) {
-            return;
-        }
-
         divided = true;  // Mark as divided
     
         float halfWidth = boundary.getW() / 2;
@@ -51,76 +47,46 @@ public class QuadTree {
         southwest = new QuadTree(new Rectangle(x, y, halfWidth, halfHeight), depth + 1);
     
         // Distribute existing points into appropriate quadrants
-        redistributePoints();
-    }
-    
-    private void redistributePoints() {
-        ArrayList<Place> redistributedPoints = new ArrayList<>(points.size());
-        Iterator<Place> iterating = points.iterator();
-        while (iterating.hasNext()) {
-            Place point = iterating.next();
-            redistributedPoints.add(point);
-        }
-        points.clear();  // Clear the points as they will be reinserted into new quadrants
-    
-        Iterator<Place> iterator = redistributedPoints.iterator();
+        Iterator<Place> iterator = points.iterator();
         while (iterator.hasNext()) {
             Place point = iterator.next();
-            if (!insert(point)) { // Reinsert points into the correct quadrant
-                System.err.println("Failed to reinsert point during subdivision: " + point);
+            QuadTree quadrant = getQuadrant(point);
+            if (quadrant != null) {
+                quadrant.insert(point);
             }
         }
+        points.clear();
     }
     
     
+    private QuadTree getQuadrant(Place point) {
+        if (point.getX() >= boundary.getX() + boundary.getW() / 2) {
+            return (point.getY() >= boundary.getY() + boundary.getH() / 2) ? northeast : southeast;
+        } else {
+            return (point.getY() >= boundary.getY() + boundary.getH() / 2) ? northwest : southwest;
+        }
+    }
 
     public boolean insert(Place point) {
-        // Check if the point is within the boundary of the current quad
         if (!boundary.contains(point.getX(), point.getY())) {
-            System.err.println("Point out of bounds: " + point + " for boundary: " + boundary);
-            return false;  // Skip insertion if point is out of bounds
+            System.err.println("Point out of bounds: " + point);
+            return false;
         }
-    
-        // Ensure capacity and subdivide if necessary
-        if (points.size() >= getCurrentCapacity() && !divided) {
+
+        if (!divided && points.size() >= getCurrentCapacity()) {
             subdivide();
         }
-    
-        // Directly add the point if not divided
+
         if (!divided) {
             points.add(point);
             return true;
-        }
-    
-        // Determine the appropriate quadrant for the point
-        float midX = boundary.getX() + boundary.getW() / 2;
-        float midY = boundary.getY() + boundary.getH() / 2;
-        boolean right = point.getX() >= midX;
-        boolean top = point.getY() >= midY;
-    
-        QuadTree targetQuadrant = null;
-        if (right) {
-            if (top) {
-                targetQuadrant = northeast;
-            } else {
-                targetQuadrant = southeast;
-            }
         } else {
-            if (top) {
-                targetQuadrant = northwest;
-            } else {
-                targetQuadrant = southwest;
+            QuadTree quadrant = getQuadrant(point);
+            if (quadrant != null) {
+                return quadrant.insert(point);
             }
+            return false;
         }
-    
-        // Attempt to insert the point in the determined quadrant
-        if (targetQuadrant != null && targetQuadrant.insert(point)) {
-            return true;
-        }
-    
-        // If no quadrant could insert the point, it's an error (this should not normally happen)
-        System.err.println("Insertion failed for point: " + point + " in all quadrants, even though it should be in one.");
-        return false;
     }
     
     
@@ -305,7 +271,7 @@ public class QuadTree {
     }
 
 
-    /* public static void main(String[] args) {
+    public static void main(String[] args) {
         // Create a QuadTree with a large boundary covering the whole map.
         Rectangle boundary = new Rectangle(0, 0, 10_000_000, 10_000_000);
         QuadTree tree = new QuadTree(boundary, 0);
@@ -386,7 +352,7 @@ public class QuadTree {
         tree.query(searchArea, foundTest, null);
 
         System.out.printf("Found %d places within the search area.%n", foundTest.size());
-    } */
+    }
     
     public static int generateServiceBitmask(Random random, int serviceTypeCount) {
         int serviceBitmask = 0;

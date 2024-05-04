@@ -1,23 +1,21 @@
 package arrayList;
 import iterable.Iterable;
 import iterable.Iterator;
+import comparable.*;
 
-public class ArrayList<T> implements Iterable<T> {
-    private T[] elements;
+public class ArrayList<T extends Comparabling<T>> implements Iterable<T> {
+    private Object[] elements;
     private int size = 0;
     private static final int DEFAULT_CAPACITY = 4;
 
     public ArrayList() {
-        this(DEFAULT_CAPACITY);
+        elements = new Object[DEFAULT_CAPACITY];
     }
 
     // Constructor with initial capacity to prevent resizing at early stages if the expected size is known
-    @SuppressWarnings("unchecked")
     public ArrayList(int initialCapacity) {
         if (initialCapacity > 0) {
-            elements = (T[]) new Object[initialCapacity];
-        } else if (initialCapacity == 0) {
-            elements = (T[]) new Object[DEFAULT_CAPACITY];
+            elements = new Object[initialCapacity];
         } else {
             throw new IllegalArgumentException("Illegal Capacity: " + initialCapacity);
         }
@@ -29,19 +27,13 @@ public class ArrayList<T> implements Iterable<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void grow(int minCapacity) {
         int oldCapacity = elements.length;
         int newCapacity = oldCapacity + (oldCapacity >> 1);
         if (newCapacity - minCapacity < 0) {
             newCapacity = minCapacity;
         }
-        if (newCapacity - Integer.MAX_VALUE > 0) {
-            newCapacity = hugeCapacity(minCapacity);
-        }
-
-
-        elements = (T[]) copyOf(elements, newCapacity);
+        elements = copyOf(elements, newCapacity);
     }
 
     private Object[] copyOf(Object[] original, int newLength) {
@@ -50,12 +42,6 @@ public class ArrayList<T> implements Iterable<T> {
         return copy;
     }
 
-    private int hugeCapacity(int minCapacity) {
-        if (minCapacity < 0) { // Overflow
-            throw new OutOfMemoryError();
-        }
-        return (minCapacity > Integer.MAX_VALUE) ? Integer.MAX_VALUE : Integer.MAX_VALUE - 8;
-    }
 
     public boolean add(T element) {
         ensureCapacity(size + 1);
@@ -63,6 +49,7 @@ public class ArrayList<T> implements Iterable<T> {
         return true;
     }
 
+    @SuppressWarnings("unchecked")
     public T get(int index) {
         if (index >= size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -104,6 +91,46 @@ public class ArrayList<T> implements Iterable<T> {
         return size == 0;
     }
 
+    public void sort() {
+        quickSort(0, size - 1);
+    }
+
+    private void quickSort(int low, int high) {
+        if (low < high) {
+            int pi = partition(low, high);
+
+            quickSort(low, pi - 1);
+            quickSort(pi + 1, high);
+        }
+    }
+
+    private int partition(int low, int high) {
+        @SuppressWarnings("unchecked")
+        T pivot = (T) elements[high];  // Safely cast to T
+        int i = (low - 1);
+    
+        for (int j = low; j < high; j++) {
+            @SuppressWarnings("unchecked")
+            T currentElement = (T) elements[j];  // Safely cast to T before comparing
+    
+            if (currentElement.compareTo(pivot) <= 0) {
+                i++;
+                // Swap elements[i] and elements[j]
+                Object temp = elements[i];
+                elements[i] = elements[j];
+                elements[j] = temp;
+            }
+        }
+    
+        // Swap elements[i+1] and elements[high] (or pivot)
+        Object temp = elements[i + 1];
+        elements[i + 1] = elements[high];
+        elements[high] = temp;
+    
+        return i + 1;
+    }
+    
+
     @Override
     public Iterator<T> iterator() {
         return new ArrayListIterator();
@@ -122,7 +149,7 @@ public class ArrayList<T> implements Iterable<T> {
             if (!hasNext()) {
                 throw new IllegalStateException("No more elements");
             }
-            return (T) elements[currentIndex++];
+            return get(currentIndex++);
         }
     }
 

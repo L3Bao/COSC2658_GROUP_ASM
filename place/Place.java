@@ -1,6 +1,8 @@
 package place;
 
-public class Place {
+import comparable.*;
+
+public class Place implements Comparabling<Place> {
     private float x; // Using float instead of double
     private float y; // Using float instead of double
     private int serviceBitmask; // Using int directly for services, assuming bitmasking fits in int
@@ -9,6 +11,15 @@ public class Place {
         this.x = x;
         this.y = y;
         this.serviceBitmask = serviceBitmask;
+    }
+
+    @Override
+    public int compareTo(Place other) {
+        int result = Float.compare(this.x, other.x);
+        if (result == 0) {
+            result = Float.compare(this.y, other.y);
+        }
+        return result;
     }
 
     public float getX() {
