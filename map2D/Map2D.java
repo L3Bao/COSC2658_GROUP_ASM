@@ -67,7 +67,7 @@ public class Map2D {
 
         // Adding places with various services
         Random random = new Random();
-        for (int i = 0; i < 10_000_000; i++) {
+        for (int i = 0; i < 100_000_000; i++) {
             // Randomly distribute points across the entire boundary to ensure a uniform spread
             float x = random.nextFloat() * Map2D.MAP_WIDTH;
             float y = random.nextFloat() * Map2D.MAP_HEIGHT;
@@ -175,9 +175,32 @@ public class Map2D {
                     System.out.print("Enter height of search area: ");
                     float height = scanner.nextFloat();
                     Rectangle searchArea = new Rectangle(searchX, searchY, width, height);
-                    System.out.println("Search Results:");
-                    map.search(searchArea, null); // Search without service filter
-                    break;
+                    System.out.println("Do you want to search with service filters ?");
+                    System.out.println("(1 for yes, any other number for no): ");
+                    int filterServiceType = scanner.nextInt();
+                    scanner.nextLine(); // Consume newline character
+                    if (filterServiceType == 1) {
+                        System.out.println("Enter service type (1-10): ");
+                        System.out.println("1. Cafe");
+                        System.out.println("2. Restaurant");
+                        System.out.println("3. Gas Station");
+                        System.out.println("4. Library");
+                        System.out.println("5. Hospital");
+                        System.out.println("6. School");
+                        System.out.println("7. Store");
+                        System.out.println("8. Park");
+                        System.out.println("9. Hotel");
+                        System.out.println("10. Gym");
+                        int searchServiceTypeIndex = scanner.nextInt() - 1;
+                        scanner.nextLine(); // Consume newline character
+                        System.out.println("Search Results:");
+                        map.search(searchArea, 1 << searchServiceTypeIndex); // Search with service filter
+                        break;
+                    } else {
+                        System.out.println("Search Results:");
+                        map.search(searchArea, null); // Search with service filter
+                        break;
+                    }
                 case 5:
                     running = false;
                     break;
