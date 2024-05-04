@@ -3,7 +3,7 @@ import iterable.Iterable;
 import iterable.Iterator;
 import comparable.*;
 
-public class ArrayList<T extends Comparabling<T>> implements Iterable<T> {
+public class ArrayList<T extends SpatialComparable<T>> implements Iterable<T> {
     private Object[] elements;
     private int size = 0;
     private static final int DEFAULT_CAPACITY = 4;

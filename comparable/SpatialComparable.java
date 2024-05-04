@@ -1,5 +1,5 @@
 package comparable;
 
-public interface Comparabling<T> {
+public interface SpatialComparable<T> {
     int compareTo(T other);
 }

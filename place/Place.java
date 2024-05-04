@@ -2,7 +2,7 @@ package place;
 
 import comparable.*;
 
-public class Place implements Comparabling<Place> {
+public class Place implements SpatialComparable<Place> {
     private float x; // Using float instead of double
     private float y; // Using float instead of double
     private int serviceBitmask; // Using int directly for services, assuming bitmasking fits in int
