@@ -315,7 +315,7 @@ public class QuadTree {
         int numberOfPoints = 10_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        float areaSize = 100_000;
+        float areaSize = 10_000_000;
 
         long startInsertTime = System.nanoTime();
     

@@ -23,7 +23,7 @@ public class Map2D {
     public void addPlace(float x, float y, int serviceBitmask) {
         Place newPlace = new Place(x, y, serviceBitmask);
         batch.add(newPlace);
-        if (batch.size() == BATCH_SIZE) {
+        if (batch.size() <= BATCH_SIZE) {
             flushBatch(); // Insert the batch to the QuadTree and clear it
         }
     }
@@ -123,6 +123,8 @@ public class Map2D {
                     System.out.println("10. Gym");
                     int serviceTypeIndex = scanner.nextInt() - 1;
                     map.addPlace(x, y, 1 << serviceTypeIndex);
+                    String serviceName = ServiceRegistry.getServiceType(serviceTypeIndex);
+                    System.out.println("Added place at (" + x + ", " + y + ") with service: " + serviceName);
                     System.out.println("Do you want to add more service types ?: ");
                     System.out.println("(1 to continue, any other number to stop)");
                     int addMoreServiceType = scanner.nextInt();
@@ -139,7 +141,7 @@ public class Map2D {
                         System.out.println("8. Park");
                         System.out.println("9. Hotel");
                         System.out.println("10. Gym");
-                        int addServiceTypeIndex = scanner.nextInt();
+                        int addServiceTypeIndex = scanner.nextInt() - 1;
                         scanner.nextLine(); // Consume newline character
                         map.editPlaceServices(x, y, "add", ServiceRegistry.getServiceType(addServiceTypeIndex));
                         System.out.println("Do you want to add more service types ?: ");
