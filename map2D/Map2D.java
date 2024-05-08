@@ -11,8 +11,8 @@ public class Map2D {
     private QuadTree root;
     private ArrayList<Place> batch;
     private static final int BATCH_SIZE = 10000;
-    private static final float MAP_WIDTH = 10000000;  // Example map width
-    private static final float MAP_HEIGHT = 10000000; // Example map height
+    private static final int MAP_WIDTH = 10000000;  // Example map width
+    private static final int MAP_HEIGHT = 10000000; // Example map height
 
     public Map2D() {
         this.root = new QuadTree(new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT), 0);
@@ -20,7 +20,7 @@ public class Map2D {
     }
 
     // Add a place to the map
-    public void addPlace(float x, float y, int serviceBitmask) {
+    public void addPlace(int x, int y, int serviceBitmask) {
         Place newPlace = new Place(x, y, serviceBitmask);
         batch.add(newPlace);
         if (batch.size() == BATCH_SIZE) {
@@ -36,7 +36,7 @@ public class Map2D {
     }
 
     // Edit services of a place
-    public void editPlaceServices(float x, float y, String action, String serviceType) {
+    public void editPlaceServices(int x, int y, String action, String serviceType) {
         Place place = root.findPlace(x, y);
         if (place == null) {
             System.out.println("Place not found at coordinates (" + x + ", " + y + ")");
@@ -57,7 +57,7 @@ public class Map2D {
     }
 
     // Remove a place from the map
-    public void removePlace(float x, float y) {
+    public void removePlace(int x, int y) {
         boolean success = root.removePlace(x, y);
         if (!success) {
             System.out.println("Failed to remove place at coordinates (" + x + ", " + y + ")");
@@ -82,8 +82,8 @@ public class Map2D {
         Random random = new Random();
         for (int i = 0; i < 10_000_000; i++) {
             // Randomly distribute points across the entire boundary to ensure a uniform spread
-            float x = random.nextFloat() * Map2D.MAP_WIDTH;
-            float y = random.nextFloat() * Map2D.MAP_HEIGHT;
+            int x = random.nextInt() * Map2D.MAP_WIDTH;
+            int y = random.nextInt() * Map2D.MAP_HEIGHT;
             int serviceBitmask = QuadTree.generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
 
             map.addPlace(x, y, serviceBitmask);
@@ -107,9 +107,9 @@ public class Map2D {
             switch (choice) {
                 case 1:
                     System.out.print("Enter X coordinate: ");
-                    float x = scanner.nextFloat();
+                    int x = scanner.nextInt();
                     System.out.print("Enter Y coordinate: ");
-                    float y = scanner.nextFloat();
+                    int y = scanner.nextInt();
                     System.out.println("Enter service type (1-10): ");
                     System.out.println("1. Cafe");
                     System.out.println("2. Restaurant");
@@ -150,9 +150,9 @@ public class Map2D {
                     break;
                 case 2:
                     System.out.print("Enter X coordinate: ");
-                    float editX = scanner.nextFloat();
+                    int editX = scanner.nextInt();
                     System.out.print("Enter Y coordinate: ");
-                    float editY = scanner.nextFloat();
+                    int editY = scanner.nextInt();
                     System.out.println("Enter action (1 for 'add', 2 for 'remove'): ");
                     int editAction = scanner.nextInt();
                     scanner.nextLine(); // Consume newline character
@@ -173,20 +173,20 @@ public class Map2D {
                     break;
                 case 3:
                     System.out.print("Enter X coordinate: ");
-                    float removeX = scanner.nextFloat();
+                    int removeX = scanner.nextInt();
                     System.out.print("Enter Y coordinate: ");
-                    float removeY = scanner.nextFloat();
+                    int removeY = scanner.nextInt();
                     map.removePlace(removeX, removeY);
                     break;
                 case 4:
                     System.out.print("Enter X coordinate of search area: ");
-                    float searchX = scanner.nextFloat();
+                    int searchX = scanner.nextInt();
                     System.out.print("Enter Y coordinate of search area: ");
-                    float searchY = scanner.nextFloat();
+                    int searchY = scanner.nextInt();
                     System.out.print("Enter width of search area: ");
-                    float width = scanner.nextFloat();
+                    int width = scanner.nextInt();
                     System.out.print("Enter height of search area: ");
-                    float height = scanner.nextFloat();
+                    int height = scanner.nextInt();
                     Rectangle searchArea = new Rectangle(searchX, searchY, width, height);
                     System.out.println("Do you want to search with service filters ?");
                     System.out.println("(1 for yes, any other number for no): ");

@@ -3,11 +3,11 @@ package place;
 import comparable.*;
 
 public class Place implements SpatialComparable<Place> {
-    private float x; // Using float instead of double
-    private float y; // Using float instead of double
+    private int x; // Using float instead of double
+    private int y; // Using float instead of double
     private int serviceBitmask; // Using int directly for services, assuming bitmasking fits in int
 
-    public Place(float x, float y, int serviceBitmask) {
+    public Place(int x, int y, int serviceBitmask) {
         this.x = x;
         this.y = y;
         this.serviceBitmask = serviceBitmask;
@@ -15,26 +15,26 @@ public class Place implements SpatialComparable<Place> {
 
     @Override
     public int compareTo(Place other) {
-        int result = Float.compare(this.x, other.x);
+        int result = Integer.compare(this.x, other.x);
         if (result == 0) {
-            result = Float.compare(this.y, other.y);
+            result = Integer.compare(this.y, other.y);
         }
         return result;
     }
 
-    public float getX() {
+    public int getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(int x) {
         this.x = x;
     }
 
-    public float getY() {
+    public int getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(int y) {
         this.y = y;
     }
 

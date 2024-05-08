@@ -10,7 +10,7 @@ import arrayList.ArrayList;
 import iterable.Iterator;
 
 public class QuadTree {
-    private static final int INITIAL_CAPACITY = 10;
+    private static final int INITIAL_CAPACITY = 4;
     private Rectangle boundary;
     private ArrayList<Place> points;
     private boolean divided;
@@ -35,16 +35,16 @@ public class QuadTree {
     private void subdivide() {
         divided = true;  // Mark as divided
     
-        float halfWidth = boundary.getW() / 2;
-        float halfHeight = boundary.getH() / 2;
-        float x = boundary.getX();
-        float y = boundary.getY();
+        int halfWidth = boundary.getW() / 2;
+        int halfHeight = boundary.getH() / 2;
+        int x = boundary.getX();
+        int y = boundary.getY();
     
         // Initialize child quadrants lazily
-        northeast = new QuadTree(new Rectangle(x + halfWidth, y + halfHeight, halfWidth, halfHeight), depth + 1);
-        northwest = new QuadTree(new Rectangle(x, y + halfHeight, halfWidth, halfHeight), depth + 1);
-        southeast = new QuadTree(new Rectangle(x + halfWidth, y, halfWidth, halfHeight), depth + 1);
-        southwest = new QuadTree(new Rectangle(x, y, halfWidth, halfHeight), depth + 1);
+        northeast = new QuadTree(new Rectangle(x + halfWidth, y, halfWidth, halfHeight), depth + 1);
+        northwest = new QuadTree(new Rectangle(x, y, halfWidth, halfHeight), depth + 1);
+        southeast = new QuadTree(new Rectangle(x + halfWidth, y + halfHeight, halfWidth, halfHeight), depth + 1);
+        southwest = new QuadTree(new Rectangle(x, y + halfHeight, halfWidth, halfHeight), depth + 1);
     
         // Distribute existing points into appropriate quadrants
         Iterator<Place> iterator = points.iterator();
@@ -60,12 +60,17 @@ public class QuadTree {
     
     
     private QuadTree getQuadrant(Place point) {
-        if (point.getX() >= boundary.getX() + boundary.getW() / 2) {
-            return (point.getY() >= boundary.getY() + boundary.getH() / 2) ? northeast : southeast;
+        boolean rightHalf = point.getX() >= boundary.getX() + boundary.getW() / 2;
+        boolean topHalf = point.getY() < boundary.getY() + boundary.getH() / 2; // Assuming top origin
+
+
+        if (rightHalf) {
+            return topHalf ? northeast : southeast;
         } else {
-            return (point.getY() >= boundary.getY() + boundary.getH() / 2) ? northwest : southwest;
+            return topHalf ? northwest : southwest;
         }
     }
+    
 
     public boolean insert(Place point) {
         if (!boundary.contains(point.getX(), point.getY())) {
@@ -84,8 +89,9 @@ public class QuadTree {
             QuadTree quadrant = getQuadrant(point);
             if (quadrant != null) {
                 return quadrant.insert(point);
+            } else {
+                return false;
             }
-            return false;
         }
     }
     
@@ -144,7 +150,7 @@ public class QuadTree {
         
     }
 
-    public void editPlaceService(float x, float y, String action, String serviceType) {
+    public void editPlaceService(int x, int y, String action, String serviceType) {
         // Find the place in the QuadTree
         Place place = findPlace(x, y);
         if (place == null) {
@@ -179,7 +185,7 @@ public class QuadTree {
     }
 
 
-    public boolean removePlace(float x, float y) {
+    public boolean removePlace(int x, int y) {
         // Find the place in the QuadTree
         Place place = findPlace(x, y);
         if (place == null) {
@@ -198,7 +204,7 @@ public class QuadTree {
     }
 
     // Helper method to find a place in the QuadTree based on coordinates
-    public Place findPlace(float x, float y) {
+    public Place findPlace(int x, int y) {
         ArrayList<Place> found = new ArrayList<>();
         query(new Rectangle(x, y, 1, 1), found, null); // Search a small area around the point
         for (int i = 0; i < found.size(); i++) {
@@ -227,7 +233,7 @@ public class QuadTree {
     }
 
     // Helper method to find the QuadTree node containing a specific point
-    private QuadTree findContainingNode(float x, float y, QuadTree node) {
+    private QuadTree findContainingNode(int x, int y, QuadTree node) {
         if (node.boundary.contains(x, y)) {
             if (!node.divided) {
                 return node; // Found leaf node containing the point
@@ -275,39 +281,40 @@ public class QuadTree {
         // Create a QuadTree with a large boundary covering the whole map.
         Rectangle boundary = new Rectangle(0, 0, 10_000_000, 10_000_000);
         QuadTree tree = new QuadTree(boundary, 0);
-        Random random = new Random();
         ArrayList<Place> batch = new ArrayList<>();
-        int batchSize = 10_000; // Define an optimal batch size
-        int numberOfPoints = 10_000_000; // Total number of points to insert
+        int batchSize = 10_000; // Batch size for batch insertion
+        Random random = new Random();
+        int numberOfPoints = 2_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        float areaSize = 100_000;
+        int areaSize = 10_000_000;
 
         long startInsertTime = System.nanoTime();
     
         // Generate points
         for (int i = 0; i < numberOfPoints; i++) {
             // Randomly distribute points across the entire boundary to ensure a uniform spread
-            float x = random.nextFloat() * boundary.getW();
-            float y = random.nextFloat() * boundary.getH();
+            int x = random.nextInt(boundary.getW());
+            int y = random.nextInt(boundary.getH());
             int serviceBitmask = generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
     
             // Create a new place and add to batch
             Place newPlace = new Place(x, y, serviceBitmask);
             batch.add(newPlace);
-    
+
             // Perform batch insertion when batch size is reached
             if (batch.size() == batchSize) {
                 tree.insertBatch(batch);
-                batch.clear(); // Clear the batch after insertion to free up memory
+                batch.clear();  // Clear the batch after insertion to free up memory
             }
         }
-        
+
         // Insert any remaining points in the batch
         if (!batch.isEmpty()) {
             tree.insertBatch(batch);
             batch.clear();
         }
+        
 
         long endInsertTime = System.nanoTime();
         System.out.printf("Insertion of %d places completed in %.2f ms.%n", numberOfPoints, (endInsertTime - startInsertTime) / 1e6);
@@ -335,8 +342,8 @@ public class QuadTree {
         System.out.println("The lucky chosen place to be edit and remove is:\n" + found.get(35));
 
         // Test editing a place's services
-        float testX = found.get(35).getX();
-        float testY = found.get(35).getY();
+        int testX = found.get(35).getX();
+        int testY = found.get(35).getY();
         String action = "add"; // or "remove"
         String serviceType = "Restaurant"; // or any other service type
         tree.editPlaceService(testX, testY, action, serviceType);
