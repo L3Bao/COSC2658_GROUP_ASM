@@ -73,15 +73,28 @@ public class QuadTree {
     
 
     public boolean insert(Place point) {
+        // Special handling for points on the exclusive right and bottom boundary of the entire space
+        if ((point.getX() == getBoundary().getX() + getBoundary().getW()) || 
+            (point.getY() == getBoundary().getY() + getBoundary().getH())) {
+            // Adjust these points to be considered in-bounds by reducing x or y by a minimal value
+            // This is a common technique used to handle boundary conditions in computational problems
+            if (point.getX() == getBoundary().getX() + getBoundary().getW()) {
+                point.setX(point.getX() - 1); // Decrement x to move the point to the left side
+            }
+            if (point.getY() == getBoundary().getY() + getBoundary().getH()) {
+                point.setY(point.getY() - 1); // Decrement y to move the point upwards
+            }
+        }
+    
         if (!boundary.contains(point.getX(), point.getY())) {
             System.err.println("Point out of bounds: " + point);
             return false;
         }
-
+    
         if (!divided && points.size() >= getCurrentCapacity()) {
             subdivide();
         }
-
+    
         if (!divided) {
             points.add(point);
             return true;
@@ -94,6 +107,7 @@ public class QuadTree {
             }
         }
     }
+    
     
     
     
@@ -284,7 +298,7 @@ public class QuadTree {
         ArrayList<Place> batch = new ArrayList<>();
         int batchSize = 10_000; // Batch size for batch insertion
         Random random = new Random();
-        int numberOfPoints = 2_000_000; // Total number of points to insert
+        int numberOfPoints = 10_000_000; // Total number of points to insert
     
         // Define the center of the query area
         int areaSize = 10_000_000;

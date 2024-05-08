@@ -44,7 +44,7 @@ public class Rectangle {
     }
 
     public boolean contains(int px, int py) {
-        return px >= getLeft() && px <= getRight() && py >= getTop() && py <= getBottom();
+        return px >= getLeft() && px < getRight() && py >= getTop() && py < getBottom();
     }
     
 

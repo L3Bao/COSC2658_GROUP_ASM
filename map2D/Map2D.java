@@ -82,8 +82,8 @@ public class Map2D {
         Random random = new Random();
         for (int i = 0; i < 10_000_000; i++) {
             // Randomly distribute points across the entire boundary to ensure a uniform spread
-            int x = random.nextInt() * Map2D.MAP_WIDTH;
-            int y = random.nextInt() * Map2D.MAP_HEIGHT;
+            int x = random.nextInt(Map2D.MAP_WIDTH);
+            int y = random.nextInt(Map2D.MAP_HEIGHT) ;
             int serviceBitmask = QuadTree.generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
 
             map.addPlace(x, y, serviceBitmask);

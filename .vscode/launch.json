@@ -9,6 +9,20 @@
             "name": "Map2D",
             "request": "launch",
             "mainClass": "map2D.Map2D",
+            "projectName": "COSC2658_GROUP_ASM_97fd524d"
+        },
+        {
+            "type": "java",
+            "name": "QuadTree",
+            "request": "launch",
+            "mainClass": "quadTree.QuadTree",
+            "projectName": "COSC2658_GROUP_ASM_97fd524d"
+        },
+        {
+            "type": "java",
+            "name": "Map2D",
+            "request": "launch",
+            "mainClass": "map2D.Map2D",
             "projectName": "COSC2658_GROUP_ASM_7e298232"
         },
         {
