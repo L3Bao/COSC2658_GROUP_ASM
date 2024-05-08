@@ -10,7 +10,7 @@ import arrayList.ArrayList;
 import iterable.Iterator;
 
 public class QuadTree {
-    private static final int INITIAL_CAPACITY = 4;
+    private static final int INITIAL_CAPACITY = 10;
     private Rectangle boundary;
     private ArrayList<Place> points;
     private boolean divided;
@@ -107,7 +107,6 @@ public class QuadTree {
             }
         }
     }
-    
     
     
     
@@ -298,36 +297,59 @@ public class QuadTree {
         ArrayList<Place> batch = new ArrayList<>();
         int batchSize = 10_000; // Batch size for batch insertion
         Random random = new Random();
-        int numberOfPoints = 64_000_000; // Total number of points to insert
+        int numberOfPoints = 10_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        int areaSize = 100_000;
+        int areaSize = 10_000_000;
 
         long startInsertTime = System.nanoTime();
     
         // Generate points
         for (int i = 0; i < numberOfPoints; i++) {
-            // Randomly distribute points across the entire boundary to ensure a uniform spread
-            int x = random.nextInt(boundary.getW());
-            int y = random.nextInt(boundary.getH());
+            int quadrant = i % 4; // Randomly choose quadrant: 0, 1, 2, or 3
+            int x = 0 , y = 0;
+        
+            int midX = boundary.getW() / 2;
+            int midY = boundary.getH() / 2;
+
+            switch (quadrant) {
+                case 0: // Northwest
+                    x = random.nextInt(midX);
+                    y = random.nextInt(midY);
+                    break;
+                case 1: // Northeast
+                    x = midX + random.nextInt(boundary.getW() - midX);
+                    y = random.nextInt(midY);
+                    break;
+                case 2: // Southwest
+                    x = random.nextInt(midX);
+                    y = midY + random.nextInt(boundary.getH() - midY);
+                    break;
+                case 3: // Southeast
+                    x = midX + random.nextInt(boundary.getW() - midX);
+                    y = midY + random.nextInt(boundary.getH() - midY);
+                    break;
+            }
+        
             int serviceBitmask = generateServiceBitmask(random, ServiceRegistry.getServiceTypes().length);
-    
+        
             // Create a new place and add to batch
             Place newPlace = new Place(x, y, serviceBitmask);
             batch.add(newPlace);
-
+        
             // Perform batch insertion when batch size is reached
             if (batch.size() == batchSize) {
                 tree.insertBatch(batch);
                 batch.clear();  // Clear the batch after insertion to free up memory
             }
         }
-
+        
         // Insert any remaining points in the batch
         if (!batch.isEmpty()) {
             tree.insertBatch(batch);
             batch.clear();
         }
+        
         
 
         long endInsertTime = System.nanoTime();
