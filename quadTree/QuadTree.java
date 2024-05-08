@@ -298,10 +298,10 @@ public class QuadTree {
         ArrayList<Place> batch = new ArrayList<>();
         int batchSize = 10_000; // Batch size for batch insertion
         Random random = new Random();
-        int numberOfPoints = 10_000_000; // Total number of points to insert
+        int numberOfPoints = 64_000_000; // Total number of points to insert
     
         // Define the center of the query area
-        int areaSize = 10_000_000;
+        int areaSize = 100_000;
 
         long startInsertTime = System.nanoTime();
     
