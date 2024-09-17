@@ -3,7 +3,7 @@ package arrayList;
 public class ArrayList<T> implements List<T> {
   private int size;
   private int pointer;
-  private static int CAPACITY = 1000;
+  private static int CAPACITY = 50;
   private T[] items;
 
   public ArrayList() {
@@ -11,6 +11,15 @@ public class ArrayList<T> implements List<T> {
     pointer = 0;
     items = (T[]) new Object[CAPACITY];
   }
+
+  private void ensureCapacity() {
+    if (size >= items.length) {
+        CAPACITY = CAPACITY * 2; // Double the capacity
+        T[] newItems = (T[]) new Object[CAPACITY];
+        System.arraycopy(items, 0, newItems, 0, items.length);
+        items = newItems;
+    }
+}
 
   // Big-O time complexity of insertAt: O(n)
   @Override
